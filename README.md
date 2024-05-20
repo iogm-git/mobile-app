@@ -9,7 +9,7 @@
   <h3 align="center">IOGM</h3>
 
   <p align="center">
-    Backend
+    Mobile App
   </p>
 </div>
 
