@@ -1,79 +1,152 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+<a name="readme-top"></a>
 
-# Getting Started
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+    <img src="https://iogm.biz.id/logo-white.svg" alt="Logo" width="80" height="80">
+  </a>
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+  <h3 align="center">IOGM</h3>
 
-## Step 1: Start the Metro Server
+  <p align="center">
+    Backend
+  </p>
+</div>
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#feature">Feature</a></li>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+    </li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
-To start Metro, run the following command from the _root_ of your React Native project:
+<!-- ABOUT THE PROJECT -->
 
-```bash
-# using npm
-npm start
+## About The Project
 
-# OR using Yarn
-yarn start
-```
+Isi dari project ini adalah aplikasi IOGM versi mobile dan finalnya bisa didownload di PlayStore. Bertujuan untuk menampilkan source code yang telah saya buat sebagai bahan pertimbangan. 
+ 
+Berikut ini beberapa bagian dari website aplikasi IOGM : 
 
-## Step 2: Start your Application
+IOGM - User adalah aplikasi yang berguna untuk mengelola akun yang akan digunakan di seluruh bagian dari aplikasi Shop dan Code.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+IOGM - Shop adalah aplikasi penjualan sederhana. Menjual landing page yang dibangun menggunakan HTML, CSS, Javascript. Jadi ketika sudah berhasil transaksi, maka member yang sudah bayar bisa mendownload zip yang berisi file tersebut.
 
-### For Android
+IOGM - Code adalah aplikasi pembelajaran online tentang programming. Pemberi materi akan menerima pendapatan setelah penerima materi resmi membeli materi tersebut. Dan penerima materi akan mendapatkan sertifikat jika sudah menyelesaikan pembelajaran.
 
-```bash
-# using npm
-npm run android
+Saat ini Masih sedang dalam proses pembuatan.
 
-# OR using Yarn
-yarn android
-```
+### Feature
+1. IOGM - User :
+    - Autentikasi : 
+      - Frontend = Google (hanya mengambil email kemudian tetap di proses login menggunakan jwt)
+      - Backend = Jwt
 
-### For iOS
+    - Guest : 
+      - Login 
+      - Register
+      - Reset Password
+    
+    - Member :
+      - Mengelola informasi seperti username , name, foto
+      - Menerima email yang berisi kode untuk memvalidasi email
+      - Jika sudah terisi email maka bisa memilih pendaftaran/keperluan login untuk shop atau code
+      - Selanjutnya akan ada featur validasi nomor handphone via whatsapp
+      - Instructor : 
+        - Mengelola informasi akun bank Midtrans untuk fitur payout
 
-```bash
-# using npm
-npm run ios
+1. IOGM - Shop :
+    - Guest :
+      - Melakukan search website berdasarkan nama category, type, dan pagination
+      - Melihat details dari website
+      
+    - Member :
+      - User bisa mencoba/melihat view tampilan seluruh landing page, dengan syarat sudah terdaftar sebagai member.
+      - Menambahkan landing page ke dalam daftar favorite dan keranjang.
+      - Melakukan, melihat, dan mendownload transaksi.
+      - Mengunduh file .zip jika sudah membayar.
+      - Metode pembayaran menggunakan Midtrans.
 
-# OR using Yarn
-yarn ios
-```
+2. IOGM - Code :
+    - Guest : 
+      - Melihat dan search course
+      - Verifikasi sertifikat menggunakan id
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+    - Member :
+      - General :
+        - Forum diskusi : 
+          - Berfungsi untuk melakukan tanya jawab antara instructor dan student secara publik sesuai kategori
+          - Filter berdasarkan course
+        - Setting :
+          - Menyesuaikan data diri seperti tanggal lahir dan alamat
+      - Instructor :
+        - Profile : Melihat data pribadi
+        - Courses : Menampilkan data seluruh course
+          - Form : Mengelola data seperti judul, deskripsi, harga dan lainnya
+          - Sections : Menampilkan seluruh data dari course 
+            - Form : Menentukan bagian dari courses
+            - Lessons : Menampilkan seluruh data dari section
+              - Form : Mengelola materi yang akan menjadi bagian dari section dan course
+        - Questions : Melihat dan menjawab berbagai pertanyaan dari student ke instructor secara private
+        - Earnings : Monitoring transaksi dan disbursement
+        - Reviews : Menampilkan ulasan kursus dari student
+      - Student :
+        - Profile : Melihat data pribadi
+        - Courses : Menampilkan courses yang diikuti
+          - Sections : Melihat bagian dari courses dan progress course yang dipilih
+            - Lessons : Materi 
+          - Ask : Form tanya secara private ke instructor sesuai course yang diikuti
+          - Review : Form ulasan untuk course yang dibeli
+        - Stashes : Mengelola course favorite
+        - Certificates : Daftar urutan sertifikat jika sudah menyelesaikan course
+        - Answers : Melihat jawaban dari instructor
+        - Transactions : Melihat dan mengontrol transaksi
+          - Paid : Melakukan transaksi / bayar
+        - Reviews : Melihat daftar course yang telah di review
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Step 3: Modifying your App
+### Built With
 
-Now that you have successfully run the app, let's modify it.
+<table style="border-collapse: collapse;">
+    <tr>
+        <td style="border: none;">
+            <div><img src="https://reactnative.dev/img/header_logo.svg" height=35></div>
+        </td>
+    </tr>
+</table>
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+<!-- GETTING STARTED -->
 
-## Congratulations! :tada:
+## Getting Started
 
-You've successfully run and modified your React Native App. :partying_face:
+_Berikut ini adalah cara untuk memulai pengetesan._
 
-### Now what?
+1. Clone
+   ```sh
+   git clone https://github.com/iogm-git/mobile-app.git
+   ```
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
 
-# Troubleshooting
+<!-- CONTACT -->
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## Contact
 
-# Learn More
+Ilham Rahmat Akbar - ilhamrhmtkbr@gmail.com
 
-To learn more about React Native, take a look at the following resources:
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
