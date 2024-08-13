@@ -1,6 +1,9 @@
 import { Image, View } from 'react-native'
 import React, { PropsWithChildren } from 'react'
-import { root } from '@root/utils/Styles'
+
+import { borderDefault, size } from '@root/utils/Styles'
+import { RootState } from '@root/redux/store';
+import { useSelector } from 'react-redux';
 
 type ImgCardProps = PropsWithChildren<{
     picture: string;
@@ -32,14 +35,16 @@ const pictureSources: { [key: string]: any } = {
 const ImgCardComp = ({ picture }: ImgCardProps) => {
     const imageSource = pictureSources[picture];
 
+    const { theme } = useSelector((state: RootState) => state.theme)
+
     return (
-        <View style={{
+        <View style={[borderDefault(theme).borderS, {
             position: 'relative',
-            borderRadius: root.radiusM,
+            borderRadius: size.radiusM,
             overflow: 'hidden',
             zIndex: 1,
             alignItems: 'center'
-        }}>
+        }]}>
             <Image
                 source={imageSource}
                 style={{
@@ -56,9 +61,9 @@ const ImgCardComp = ({ picture }: ImgCardProps) => {
                 style={{
                     width: '90%',
                     height: 183,
-                    marginVertical: root.sizeL,
-                    resizeMode: 'cover',
-                    borderRadius: root.radiusS,
+                    marginVertical: size.l,
+                    resizeMode: 'contain',
+                    borderRadius: size.radiusS,
                     overflow: 'hidden',
                 }}
             />

@@ -1,10 +1,10 @@
 import { ScrollView, View } from 'react-native';
 import FooterComp from '@root/components/common/FooterComp';
 import HeaderComp from '@root/components/common/header/HeaderComp';
-import ShopMenuComp from '@root/components/common/header/ShopMenuComp';
-import { root } from '@root/utils/Styles';
-import NavigationComp from '@root/components/specific/shop/member/NavigationComp';
-import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@root/redux/store';
+import { size } from '@root/utils/Styles';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 
 interface LayoutsProps {
     children: React.ReactNode;
@@ -12,24 +12,22 @@ interface LayoutsProps {
 }
 
 const Layouts = ({ children, forwardedRef }: LayoutsProps) => {
-    const [isNavShow, setNavShow] = useState(false)
+    const { colors } = useSelector((state: RootState) => state.theme)
+    const navigation = useNavigation()
 
     return (
-        <View style={{ flex: 1, backgroundColor: root.bgColor }}>
-            <HeaderComp>
-                <ShopMenuComp openNavigation={() => setNavShow(!isNavShow)} />
-            </HeaderComp>
-            <ScrollView ref={forwardedRef} style={{ paddingHorizontal: root.sizeM }}>
+        <View style={{ flex: 1, backgroundColor: colors.bg }}>
+            <HeaderComp onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />
+            <ScrollView ref={forwardedRef} style={{ paddingHorizontal: size.m }}>
                 <View style={{
                     flex: 1,
-                    paddingVertical: root.sizeL,
-                    rowGap: root.sizeXx,
+                    paddingVertical: size.l,
+                    rowGap: size.m * 5,
                 }}>
                     {children}
                 </View>
                 <FooterComp />
             </ScrollView>
-            {isNavShow && <NavigationComp />}
         </View>
     );
 };

@@ -1,35 +1,109 @@
-import { View, StyleSheet, Text } from 'react-native'
 import React from 'react'
-import { borderDefault, root, textCustom } from '@root/utils/Styles'
+import { useSelector } from 'react-redux'
+import { useNavigation } from '@react-navigation/native'
+import { View, StyleSheet, Text, TouchableOpacity, Alert, ViewStyle } from 'react-native'
+
+import { borderDefault, buttonCustom, color, size, textCustom } from '@root/utils/Styles'
+
+import Layouts from '@root/views/user/Layouts'
+
+import { RootState } from '@root/redux/store'
 
 import ShopIcon from '@svg/common/@root/shop'
 import CodeIcon from '@svg/common/@root/code'
-import LinkComp from '@root/components/common/button/NavigateComp'
-import Layouts from '@root/views/user/Layouts'
+
+import NavigateComp from '@root/components/common/button/NavigateComp'
 
 const Ballot = () => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
+    const navigation = useNavigation()
+
+    const hasRegister = (role: string) => {
+        Alert.alert(
+            'Status Account',
+            `U has been Register as ${role}`,
+            [
+                { text: 'Ok' }
+            ]
+        )
+    }
+
+    const notVerifyEmail = () => {
+        Alert.alert(
+            'Status Account',
+            'U need verifiy email',
+            [
+                { text: 'Go Verify Email', onPress: () => navigation.goBack() },
+                { text: 'Ok' }
+            ]
+        )
+    }
+
+    const { data: member } = useSelector((state: RootState) => state.user.meData)
+
+    const styles = StyleSheet.create({
+        boxBallot: {
+            backgroundColor: colors.secondBg,
+            paddingTop: size.xxxx,
+            paddingHorizontal: size.m,
+            paddingBottom: size.m,
+            rowGap: size.m,
+        },
+        boxIcon: {
+            ...borderDefault(theme).borderS,
+            backgroundColor: colors.bg,
+            padding: size.m,
+            alignSelf: 'center',
+            alignItems: 'center',
+            rowGap: size.s,
+        }
+    })
+
     return (
         <Layouts>
-            <View>
-                <Text style={textCustom.textBold}>Hello Ade Ayun,</Text>
-                <Text style={textCustom.textRegular}>Please choose to visit.</Text>
-            </View>
-            <View style={styles.boxBallot}>
-                <View style={styles.boxIcon}>
-                    <ShopIcon fill={root.textColor} height={30} width={30} />
-                    <Text style={textCustom.textMedium}>Shop</Text>
+            <View style={{ rowGap: size.l }}>
+                <View>
+                    <Text style={textCustom(theme).textBold}>Hello {member && member.name},</Text>
+                    <Text style={textCustom(theme).textRegular}>Please choose to visit.</Text>
                 </View>
-                <View style={{ alignSelf: 'center' }}>
-                    <LinkComp text='Visit' type='primary' to='shop-guest-HomeScreen' />
+                <View style={[styles.boxBallot, borderDefault(theme).borderS]}>
+                    <View style={styles.boxIcon}>
+                        <ShopIcon fill={colors.text} height={30} width={30} />
+                        <Text style={textCustom(theme).textMedium}>Shop</Text>
+                    </View>
+                    <View style={{ alignSelf: 'center' }}>
+                        <NavigateComp text='Visit' type='primary' to='Shop' isNested nested={{ screen: 'ShopHomeScreen' }} />
+                    </View>
                 </View>
-            </View>
-            <View style={styles.boxBallot}>
-                <View style={styles.boxIcon}>
-                    <CodeIcon fill={root.textColor} height={30} width={30} />
-                    <Text style={textCustom.textMedium}>Code</Text>
-                </View>
-                <View style={{ alignSelf: 'center' }}>
-                    <LinkComp text='Register' type='primary' to='user-member-code-Register' />
+                <View style={[styles.boxBallot, borderDefault(theme).borderS]}>
+                    <View style={styles.boxIcon}>
+                        <CodeIcon fill={colors.text} height={30} width={30} />
+                        <Text style={textCustom(theme).textMedium}>Code</Text>
+                    </View>
+                    <View style={{ alignSelf: 'center' }}>
+                        {member && member.email !== null ? !('status' in member) ?
+                            <TouchableOpacity onPress={() => hasRegister(member.role)} style={[buttonCustom(theme).buttonCom as ViewStyle, {
+                                backgroundColor: colors.bg,
+                                borderColor: colors.border,
+                                borderWidth: 1.5,
+                            }]}>
+                                <Text style={[textCustom(theme).textRegular, {
+                                    color: color.red
+                                }]}>Register</Text>
+                            </TouchableOpacity> :
+                            <NavigateComp text='Register' type='primary' to='CodeRegister' />
+                            : <TouchableOpacity onPress={notVerifyEmail} style={[buttonCustom(theme).buttonCom as ViewStyle, {
+                                backgroundColor: colors.bg,
+                                borderColor: colors.border,
+                                borderWidth: 1.5,
+                            }]}>
+                                <Text style={[textCustom(theme).textRegular, {
+                                    color: color.red
+                                }]}>Register</Text>
+                            </TouchableOpacity>
+                        }
+                    </View>
                 </View>
             </View>
         </Layouts>
@@ -37,22 +111,3 @@ const Ballot = () => {
 }
 
 export default Ballot
-
-const styles = StyleSheet.create({
-    boxBallot: {
-        ...borderDefault.borderS,
-        backgroundColor: root.secondBgColor,
-        paddingTop: root.sizeXxxx,
-        paddingHorizontal: root.sizeM,
-        paddingBottom: root.sizeM,
-        rowGap: root.sizeM,
-    },
-    boxIcon: {
-        ...borderDefault.borderS,
-        backgroundColor: root.bgColor,
-        padding: root.sizeM,
-        alignSelf: 'center',
-        alignItems: 'center',
-        rowGap: root.sizeS,
-    }
-})

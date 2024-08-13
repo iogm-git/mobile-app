@@ -1,140 +1,192 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
-import React from 'react'
-import Layouts from '../../Layouts'
-import { borderDefault, buttonDefault, flexCustom, fontFamily, root, textCustom } from '@root/utils/Styles'
+import Echo from 'laravel-echo';
+import Pusher from '@pusher/pusher-websocket-react-native';
+import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { View, Text, ScrollView, StyleSheet, TextInput, ViewStyle, KeyboardAvoidingView } from 'react-native';
 
-const DiscussionForums = () => {
-    return (
-        <Layouts>
-            <Text style={textCustom.textBold}>DiscussionForums</Text>
+import { RootState } from '@root/redux/store';
 
-            <View>
-                <Text style={textCustom.textLight}>Categories :</Text>
-                <ScrollView horizontal>
-                    <View style={[flexCustom.flexRowStart, { flexWrap: 'nowrap' }]}>
-                        <TouchableOpacity style={buttonDefault.buttonSmall}>
-                            <Text style={textCustom.textLight}>C++</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
-            </View>
-            <View style={{ rowGap: root.sizeM }}>
-                <Text style={textCustom.textMedium}>Chat</Text>
-                <View style={{
-                    borderTopColor: root.borderColor,
-                    borderTopWidth: 1,
-                    borderBottomColor: root.borderColor,
-                    borderBottomWidth: 1,
-                    paddingVertical: root.sizeM,
-                    maxHeight: 200,
-                    overflow: 'scroll'
-                }}>
-                    <View style={{ rowGap: root.sizeS }}>
-                        <View style={{ width: '60%' }}>
-                            <View style={styles.chatFromUser}>
-                                <Text style={textCustom.textLight}>Ilham</Text>
-                            </View>
-                            <View style={styles.chatMessage}>
-                                <Text style={textCustom.textRegular}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.linkColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                        </View>
-                        <View style={{ width: '60%', alignSelf: 'flex-end' }}>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                            <View style={[styles.chatMessage, { backgroundColor: root.greenColor, borderTopLeftRadius: root.radiusS }]}>
-                                <Text style={[textCustom.textRegular, { color: root.bgColor }]}>Halo Fath</Text>
-                                <Text style={[textCustom.textLight, { color: root.transbgColor, alignSelf: 'flex-end' }]}>18:30</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-                <TextInput
-                    style={[textCustom.textRegular, borderDefault.borderS]}
-                    multiline={true}
-                    numberOfLines={4}
-                    onChangeText={text => console.log(text)}
-                    placeholder="Type here..."
-                />
-                <TouchableOpacity style={{
-                    borderRadius: root.radiusS,
-                    borderWidth: 1,
-                    width: 80,
-                    borderColor: root.blueColor,
-                    paddingHorizontal: root.sizeS,
-                    paddingVertical: root.sizeS / 2
-                }}>
-                    <Text style={{
-                        fontFamily: fontFamily.medium,
-                        fontSize: root.sizeM,
-                        color: root.blueColor,
-                        textAlign: 'center'
-                    }}>
-                        Send
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </Layouts>
-    )
+import HeaderComp from '@root/components/common/header/HeaderComp';
+import HandleComp from '@root/components/common/button/HandleComp';
+
+import { PUSHER_APP_KEY, PUSHER_HOST, PUSHER_PORT, PUSHER_SCHEME, PUSHER_APP_CLUSTER } from '@env';
+
+import { borderDefault, color, flexCustom, fontCustom, size, textCustom } from '@root/utils/Styles';
+
+interface Message {
+    user_id: string;
+    message: string;
+    created_at: string;
 }
 
-const styles = StyleSheet.create({
-    chatFromUser: {
-        ...borderDefault.borderS,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        borderBottomWidth: 0,
-        zIndex: 2,
-        marginBottom: -2,
-        maxWidth: '50%',
-        paddingTop: root.sizeS / 2,
-        paddingHorizontal: root.sizeS,
-        backgroundColor: root.bgColor
-    },
-    chatMessage: {
-        ...borderDefault.borderS,
-        borderTopLeftRadius: 0,
-        paddingVertical: root.sizeS / 2,
-        paddingHorizontal: root.sizeS,
-    }
-})
+interface MessageData {
+    message: Message;
+}
 
-export default DiscussionForums
+const DiscussionForums = () => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme);
+    const { data: member } = useSelector((state: RootState) => state.user.meData);
+    const { data: chat } = useSelector((state: RootState) => state.code.discussionForumsResult);
+    const [echo, setEcho] = useState<Echo | null>(null);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [inputMessage, setInputMessage] = useState<string>('');
+
+    const navigation = useNavigation();
+
+    const styles = StyleSheet.create({
+        chatFromUser: {
+            ...borderDefault(theme).borderS,
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+            borderBottomWidth: 0,
+            zIndex: 2,
+            marginBottom: -1,
+            maxWidth: '50%',
+            paddingTop: 2,
+            paddingHorizontal: size.s / 2,
+            backgroundColor: colors.bg,
+        },
+        chatToMe: {
+            borderTopLeftRadius: 0,
+            paddingVertical: 2,
+            paddingHorizontal: size.s / 2,
+        },
+        chatFromMe: {
+            backgroundColor: color.green,
+            paddingVertical: 2,
+            paddingHorizontal: size.s / 2,
+            borderRadius: size.radiusS,
+            borderBottomRightRadius: 0,
+            width: '60%',
+            alignSelf: 'flex-end',
+        },
+    });
+
+    useEffect(() => {
+        const initializeEcho = async () => {
+            const pusherConfig = {
+                client: new Pusher(PUSHER_APP_KEY, {
+                    cluster: PUSHER_APP_CLUSTER ?? 'mt1',
+                    forceTLS: (PUSHER_SCHEME ?? 'https') === 'https',
+                    wsHost: PUSHER_HOST ?? `ws-${PUSHER_APP_CLUSTER}.pusher.com`,
+                    wsPort: PUSHER_PORT ?? 80,
+                    wssPort: PUSHER_PORT ?? 443,
+                    enabledTransports: ['ws', 'wss'],
+                }),
+                broadcaster: 'pusher',
+                key: PUSHER_APP_KEY,
+                cluster: PUSHER_APP_CLUSTER ?? 'mt1',
+                forceTLS: (PUSHER_SCHEME ?? 'https') === 'https',
+            };
+
+            const echoInstance = new Echo(pusherConfig);
+
+            setEcho(echoInstance);
+
+            echoInstance.channel('store').listen('.receive', (data: MessageData) => {
+                setMessages((prev) => [...prev, data.message]);
+            });
+        };
+
+        initializeEcho();
+
+        return () => {
+            if (echo) {
+                echo.disconnect();
+            }
+        };
+    }, []);
+
+
+    useEffect(() => {
+        if (echo) {
+            echo.channel('store')
+                .listen('.receive', (data: MessageData) => {
+                    setMessages((prev) => [...prev, data.message]);
+                });
+        }
+    }, [echo]);
+
+    useEffect(() => {
+        if (chat && chat.data) setMessages(chat.data);
+    }, [chat]);
+
+    const sendMessage = () => {
+
+        setInputMessage('');
+    };
+
+    return (
+        <View style={{ flex: 1, backgroundColor: colors.bg }}>
+            <HeaderComp onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />
+            <View style={{ paddingHorizontal: size.m }}>
+                <View style={flexCustom.flexRowStart as ViewStyle}>
+                    <Text style={textCustom(theme).textLight}>Discussion category :</Text>
+                    <ScrollView horizontal>
+                        <View style={[flexCustom.flexRowStart as ViewStyle, { flexWrap: 'nowrap' }]}>
+                            <HandleComp small text='cpp' type='text' onPress={() => console.log('asd')} />
+                            {chat && Object.entries(chat.categories).map((value, index) => (
+                                <HandleComp key={index} small text={value[0]} type='text' onPress={() => console.log(value[1])} />
+                            ))}
+                        </View>
+                    </ScrollView>
+                </View>
+                <ScrollView
+                    style={{
+                        marginTop: size.s,
+                        borderTopColor: colors.border,
+                        borderTopWidth: 1,
+                        borderBottomColor: colors.border,
+                        borderBottomWidth: 1,
+                        paddingVertical: size.m,
+                        maxHeight: '65%',
+                    }}
+                >
+                    <View style={{ rowGap: size.s }}>
+                        {messages && messages.map((item: Message, index: number) => (
+                            <React.Fragment key={index}>
+                                {(index === 0 || messages[index].created_at.substring(0, 11) !== messages[index - 1].created_at.substring(0, 11)) && (
+                                    <Text style={[fontCustom(theme).fontLight, { fontSize: size.xs }]}>
+                                        {item.created_at.substring(0, 11)}
+                                    </Text>
+                                )}
+                                {item.user_id === member.username ? (
+                                    <View style={styles.chatFromMe}>
+                                        <Text style={[textCustom(theme).textRegular, { color: colors.bg }]}>{item.message}</Text>
+                                        <Text style={[fontCustom(theme).fontLight, { color: colors.transBg, fontSize: size.xs, alignSelf: 'flex-end' }]}>
+                                            {item.created_at.substring(11, 19)}
+                                        </Text>
+                                    </View>
+                                ) : (
+                                    <View style={{ width: '60%' }}>
+                                        <View style={styles.chatFromUser}>
+                                            <Text style={[fontCustom(theme).fontLight, { fontSize: size.xs }]}>Ilham</Text>
+                                        </View>
+                                        <View style={[styles.chatToMe, borderDefault(theme).borderS]}>
+                                            <Text style={textCustom(theme).textRegular}>{item.message}</Text>
+                                            <Text style={[fontCustom(theme).fontLight, { fontSize: size.xs, color: colors.link, alignSelf: 'flex-end' }]}>
+                                                {item.created_at.substring(11, 19)}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </View>
+                </ScrollView>
+                <KeyboardAvoidingView behavior="padding">
+                    <TextInput
+                        style={[textCustom(theme).textLight, borderDefault(theme).borderS, { marginVertical: size.xxs, paddingHorizontal: size.xxs }]}
+                        onChangeText={(text) => setInputMessage(text)}
+                        placeholder="Type here..."
+                        value={inputMessage}
+                    />
+                    <HandleComp text='Send' type='primary' onPress={sendMessage} />
+                </KeyboardAvoidingView>
+            </View>
+        </View>
+    );
+};
+
+export default DiscussionForums;

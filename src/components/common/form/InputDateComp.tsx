@@ -1,9 +1,15 @@
-import { Text, TouchableOpacity, View } from 'react-native'
-import React, { PropsWithChildren, useState } from 'react'
 import DatePicker from 'react-native-date-picker'
-import { root, borderDefault, textCustom, flexCustom } from '@root/utils/Styles'
+import { useSelector } from 'react-redux';
+import React, { PropsWithChildren, useState } from 'react'
+import { Text, TouchableOpacity, View, ViewStyle } from 'react-native'
+
+import { borderDefault, textCustom, flexCustom, size, color } from '@root/utils/Styles'
+
 import Element from './Element'
+
 import DateIcon from '@svg/member/date.svg'
+
+import { RootState } from '@root/redux/store';
 
 type InputDateProps = PropsWithChildren<{
     name: string,
@@ -15,22 +21,24 @@ const InputDateComp = ({ name = '', defaultValue = '- Choise Date -', handleInpu
     const [date, setDate] = useState(defaultValue)
     const [open, setOpen] = useState(false)
 
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
     return (
         <Element name={name}>
             <View style={{
-                padding: root.sizeX / 2,
-                rowGap: root.sizeS
+                padding: size.x / 2,
+                rowGap: size.s
             }}>
                 <TouchableOpacity onPress={() => setOpen(prev => !prev)} style={{
-                    ...borderDefault.borderS,
-                    ...flexCustom.flexRowBetween,
-                    padding: root.sizeX / 2
+                    ...borderDefault(theme).borderS as ViewStyle,
+                    ...flexCustom.flexRowBetween as ViewStyle,
+                    padding: size.x / 2
                 }}>
                     <Text style={{
-                        ...textCustom.textRegular,
-                        color: open ? root.blueColor : root.linkColor
+                        ...textCustom(theme).textRegular,
+                        color: open ? color.blue : colors.link
                     }}>{date}</Text>
-                    <DateIcon width={root.sizeM} height={root.sizeM} fill={open ? root.blueColor : root.linkColor} />
+                    <DateIcon width={size.m} height={size.m} fill={open ? color.blue : colors.link} />
                 </TouchableOpacity>
                 <DatePicker
                     modal
@@ -52,7 +60,7 @@ const InputDateComp = ({ name = '', defaultValue = '- Choise Date -', handleInpu
                     onCancel={() => {
                         setOpen(false)
                     }}
-                    buttonColor={root.blueColor}
+                    buttonColor={color.blue}
                 />
             </View>
 

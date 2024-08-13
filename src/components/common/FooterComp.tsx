@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
-import { useNavigation } from '@react-navigation/native'
-import { root, flexCustom, fontFamily, textCustom } from '@root/utils/Styles'
+import { useSelector } from 'react-redux'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { View, Text, TouchableOpacity, ViewStyle } from 'react-native'
+
+import { flexCustom, fontFamily, size, textCustom } from '@root/utils/Styles'
 
 import LocationIcon from '@svg/common/@root/footer/location'
 
@@ -14,87 +16,125 @@ import WhatsappIcon from '@svg/common/@root/footer/whatsapp'
 import EmailIcon from '@svg/common/@root/footer/email'
 import InstagramIcon from '@svg/common/@root/footer/instagram'
 
+import { RootStackParamList } from '@root/utils/Navigation'
+
+import { RootState } from '@root/redux/store'
+
 const FooterComp = () => {
-    const navigation = useNavigation()
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
 
     return (
         <View style={{
-            ...flexCustom.flexRowStart,
-            gap: root.sizeXxxx,
-            paddingVertical: root.sizeXxx,
+            ...flexCustom.flexRowStart as ViewStyle,
+            gap: size.xxxx,
+            paddingVertical: size.xxx,
             borderTopWidth: 1,
-            borderTopColor: root.borderColor,
-            marginTop: root.sizeXxxx * 3
+            borderTopColor: colors.border,
+            marginTop: size.xxxx * 3
         }}>
             <View style={{
-                rowGap: root.sizeXs
+                rowGap: size.xs
             }}>
-                <Text style={textCustom.textMedium}>IOGM</Text>
-                <View style={flexCustom.flexRowStart}>
-                    <LocationIcon width={root.sizeX} height={root.sizeX} />
-                    <Text style={styles.text}>Senen, Jakarta Pusat</Text>
+                <Text style={textCustom(theme).textMedium}>IOGM</Text>
+                <View style={flexCustom.flexRowStart as ViewStyle}>
+                    <LocationIcon width={size.x} height={size.x} />
+                    <Text style={{
+                        fontFamily: fontFamily.regular,
+                        color: colors.text,
+                        fontSize: size.s
+                    }}>Senen, Jakarta Pusat</Text>
                 </View>
-                <Text style={styles.text}>copyright © Ilham Rahmat Akbar 2024</Text>
+                <Text style={{
+                    fontFamily: fontFamily.regular,
+                    color: colors.text,
+                    fontSize: size.s
+                }}>copyright © Ilham Rahmat Akbar 2024</Text>
             </View>
             <View style={{
-                rowGap: root.sizeXs,
+                rowGap: size.xs,
             }}>
-                <Text style={textCustom.textMedium}>App</Text>
-                <View style={flexCustom.flexRowStart}>
-                    <TouchableOpacity onPress={() => navigation.navigate('user-guest-HomeScreen')} style={styles.app}>
-                        <View style={flexCustom.flexRowStart}>
-                            <UserIcon width={root.sizeL} height={root.sizeL} />
-                            <Text style={styles.text}>IOGM - User</Text>
+                <Text style={textCustom(theme).textMedium}>App</Text>
+                <View style={flexCustom.flexRowStart as ViewStyle}>
+                    <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={{
+                        padding: size.s,
+                        rowGap: 2,
+                        backgroundColor: colors.thirdBg,
+                        borderRadius: size.radiusS
+                    }}>
+                        <View style={flexCustom.flexRowStart as ViewStyle}>
+                            <UserIcon width={size.l} height={size.l} fill={colors.text} />
+                            <Text style={{
+                                fontFamily: fontFamily.regular,
+                                color: colors.text,
+                                fontSize: size.s
+                            }}>IOGM - User</Text>
                         </View>
-                        <Text style={[styles.text, { color: root.linkColor }]}>User data settings</Text>
+                        <Text style={{
+                            fontFamily: fontFamily.regular,
+                            fontSize: size.s,
+                            color: colors.link
+                        }}>User data settings</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('shop-guest-HomeScreen')} style={styles.app}>
-                        <View style={flexCustom.flexRowStart}>
-                            <ShopIcon width={root.sizeL} height={root.sizeL} />
-                            <Text style={styles.text}>IOGM - Shop</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('ShopHomeScreen')} style={{
+                        padding: size.s,
+                        rowGap: 2,
+                        backgroundColor: colors.thirdBg,
+                        borderRadius: size.radiusS
+                    }}>
+                        <View style={flexCustom.flexRowStart as ViewStyle}>
+                            <ShopIcon width={size.l} height={size.l} fill={colors.text} />
+                            <Text style={{
+                                fontFamily: fontFamily.regular,
+                                color: colors.text,
+                                fontSize: size.s
+                            }}>IOGM - Shop</Text>
                         </View>
-                        <Text style={[styles.text, { color: root.linkColor }]}>Sells UI templates</Text>
+                        <Text style={{
+                            fontFamily: fontFamily.regular,
+                            color: colors.link,
+                            fontSize: size.s
+                        }}>Sells UI templates</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('code-guest-HomeScreen')} style={styles.app}>
-                        <View style={flexCustom.flexRowStart}>
-                            <CodeIcon width={root.sizeL} height={root.sizeL} />
-                            <Text style={styles.text}>IOGM - Code</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('CodeHomeScreen')} style={{
+                        padding: size.s,
+                        rowGap: 2,
+                        backgroundColor: colors.thirdBg,
+                        borderRadius: size.radiusS
+                    }}>
+                        <View style={flexCustom.flexRowStart as ViewStyle}>
+                            <CodeIcon width={size.l} height={size.l} fill={colors.text} />
+                            <Text style={{
+                                fontFamily: fontFamily.regular,
+                                color: colors.text,
+                                fontSize: size.s
+                            }}>IOGM - Code</Text>
                         </View>
-                        <Text style={[styles.text, { color: root.linkColor }]}>Learn to code</Text>
+                        <Text style={{
+                            fontFamily: fontFamily.regular,
+                            color: colors.link,
+                            fontSize: size.s
+                        }}>Learn to code</Text>
                     </TouchableOpacity>
                 </View>
             </View>
             <View style={{
-                rowGap: root.sizeXs,
+                rowGap: size.xs,
             }}>
-                <Text style={textCustom.textMedium}>Socials</Text>
+                <Text style={textCustom(theme).textMedium}>Socials</Text>
                 <View style={{
-                    ...flexCustom.flexRowStart,
+                    ...flexCustom.flexRowStart as ViewStyle,
                     width: 200
                 }}>
-                    <GithubIcon width={root.sizeX} height={root.sizeX} />
-                    <EmailIcon width={root.sizeX} height={root.sizeX} />
-                    <InstagramIcon width={root.sizeX} height={root.sizeX} />
-                    <WhatsappIcon width={root.sizeX} height={root.sizeX} />
+                    <GithubIcon width={size.x} height={size.x} fill={colors.text} />
+                    <EmailIcon width={size.x} height={size.x} />
+                    <InstagramIcon width={size.x} height={size.x} />
+                    <WhatsappIcon width={size.x} height={size.x} />
                 </View>
             </View>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    text: {
-        fontFamily: fontFamily.regular,
-        color: root.textColor,
-        fontSize: root.sizeS
-    },
-    app: {
-        padding: root.sizeS,
-        rowGap: 2,
-        backgroundColor: root.thirdBgColor,
-        borderRadius: root.radiusS
-    }
-})
 
 export default FooterComp
 

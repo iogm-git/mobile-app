@@ -1,3 +1,104 @@
+import { APP_BASE_URL } from '@env'
+import { Alert, PermissionsAndroid, Platform } from 'react-native';
+
+export const _getDateNow = () => {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    return `${day}-${month}-${year} at ${hours}.${minutes}`;
+};
+
+export const _convertDateFormat = (inputDate) => {
+    const parts = inputDate.split('/');
+    const day = parts[0];
+    const month = parts[1];
+    const year = parts[2];
+    return `${year}-${month}-${day}`;
+}
+
+export const _requestStoragePermission = async () => {
+    if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+            {
+                title: 'Izin Penyimpanan Diperlukan',
+                message: 'Aplikasi ini memerlukan akses penyimpanan untuk mengunduh file.',
+                buttonNeutral: 'Tanya Nanti',
+                buttonNegative: 'Batal',
+                buttonPositive: 'OK',
+            }
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+            Alert.alert('Izin ditolak');
+            throw new Error('Storage permission denied');
+        }
+    }
+};
+
+export const _getImage = (name) => {
+    if (name) {
+        if (name.includes('https')) {
+            return name;
+        } else {
+            return `${APP_BASE_URL}/storage/images/${name}`;
+        }
+    }
+    return '';
+}
+
+export const _getPageFromUrl = (url) => {
+    if (!url) return null;
+
+    const queryString = url.split('?')[1];
+
+    const queryParams = queryString.split('&');
+
+    const pageParam = queryParams.find(param => param.startsWith('page='));
+
+    if (pageParam) {
+        return pageParam.split('=')[1];
+    } else {
+        return null;
+    }
+}
+
+export const _getFromData = (keyword, data) => {
+    for (let i = 0; i < data.length; i++) {
+        const obj = data[i];
+        if (keyword in obj) {
+            return obj[keyword];
+        }
+    }
+    return null;
+}
+
+export const _formatCurrency = (amount) => {
+    const parts = parseFloat(amount).toFixed(2).toString().split('.');
+
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return `Rp. ${parts.join('.')}`;
+}
+
+export const _searchData = (keyword, data, callback) => {
+    const result = []
+    data.forEach((value) => {
+        if (Object.keys(value)[0].toLowerCase().includes(keyword) || Object.values(value)[0].toLowerCase().includes(keyword)) {
+            result.push(value);
+        }
+    })
+
+    callback(result)
+}
+
+
 export const _dataBanks = [
     { "aceh": "PT. BANK ACEH" },
     { "aceh_syar": "PT. BPD ISTIMEWA ACEH SYARIAH" },
@@ -398,23 +499,3 @@ export const _countryPhoneCodes = [
     { Zimbabwe: "+263" }
 ];
 
-export const _searchData = (keyword, data, callback) => {
-    const result = []
-    data.forEach((value) => {
-        if (Object.keys(value)[0].toLowerCase().includes(keyword) || Object.values(value)[0].toLowerCase().includes(keyword)) {
-            result.push(value);
-        }
-    })
-
-    callback(result)
-}
-
-export const _getFromData = (keyword, data) => {
-    for (let i = 0; i < data.length; i++) {
-        const obj = data[i];
-        if (keyword in obj) {
-            return obj[keyword];
-        }
-    }
-    return null;
-}

@@ -1,8 +1,14 @@
+import { useSelector } from 'react-redux';
+import { Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import React, { PropsWithChildren, useState } from 'react';
-import Element from './Element';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { root, textCustom, borderDefault, flexCustom } from '@root/utils/Styles';
+
+import { size, textCustom, borderDefault, flexCustom, color } from '@root/utils/Styles';
+
 import ArrowRightIcon from '@svg/common/@root/arrow-right';
+
+import Element from './Element';
+
+import { RootState } from '@root/redux/store';
 
 type InputSelectProps = PropsWithChildren<{
     name: string;
@@ -14,37 +20,41 @@ type InputSelectProps = PropsWithChildren<{
 const InputSelectComp = ({ name = '', defaultValue = '- Choise Option -', option, handleInputOnChange }: InputSelectProps) => {
     const [show, setShow] = useState(false);
     const [value, setValue] = useState(defaultValue)
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
 
     return (
         <Element name={name}>
             <View style={{
-                padding: root.sizeX / 2,
-                rowGap: root.sizeS
+                padding: size.x / 2,
+                rowGap: size.s
             }}>
                 <TouchableOpacity onPress={() => setShow(prev => !prev)} style={{
-                    ...borderDefault.borderS,
-                    ...flexCustom.flexRowBetween,
-                    padding: root.sizeX / 2
+                    ...borderDefault(theme).borderS as ViewStyle,
+                    ...flexCustom.flexRowBetween as ViewStyle,
+                    padding: size.x / 2
                 }}>
                     <Text style={{
-                        ...textCustom.textRegular,
-                        color: show ? root.blueColor : root.linkColor
+                        ...textCustom(theme).textRegular,
+                        color: show ? color.blue : colors.link,
+                        textTransform: 'capitalize'
                     }}>{value}</Text>
-                    <ArrowRightIcon width={root.sizeM} height={root.sizeM} fill={show ? root.blueColor : root.linkColor} rotation={show ? 90 : 0} />
+                    <ArrowRightIcon width={size.m} height={size.m} fill={show ? color.blue : colors.link} rotation={show ? 90 : 0} />
                 </TouchableOpacity>
                 {show && option &&
-                    option.map((item, index) => (
-                        <Text onPress={() => {
+                    option.map((value: any, index: number) => (
+                        <TouchableOpacity onPress={() => {
                             setShow(false)
 
-                            handleInputOnChange(item)
+                            handleInputOnChange(value)
 
-                            setValue(item)
-                        }} key={index} style={{
-                            ...borderDefault.borderS,
-                            ...textCustom.textRegular,
-                            padding: root.sizeX / 2
-                        }}>{item}</Text>
+                            setValue(value)
+                        }} key={index} style={borderDefault(theme).borderS as ViewStyle}>
+                            <Text style={{
+                                ...textCustom(theme).textRegular,
+                                padding: size.x / 2,
+                                textTransform: 'capitalize'
+                            }}>{value}</Text>
+                        </TouchableOpacity>
                     ))
                 }
             </View>

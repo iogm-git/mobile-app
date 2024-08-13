@@ -1,7 +1,12 @@
 import React from 'react';
 import { TextInput } from 'react-native';
-import { root, textCustom } from '@root/utils/Styles';
+import { useSelector } from 'react-redux';
+
+import { size, textCustom } from '@root/utils/Styles';
+
 import Element from './Element';
+
+import { RootState } from '@root/redux/store';
 
 type InputAreaTextProps = {
     name: string;
@@ -11,6 +16,7 @@ type InputAreaTextProps = {
 };
 
 const InputAreaTextComp = ({ type = 'password', name = '', defaultValue = '', handleInputOnChange }: InputAreaTextProps) => {
+    const { theme } = useSelector((state: RootState) => state.theme)
 
     return (
         <Element name={name}>
@@ -22,8 +28,8 @@ const InputAreaTextComp = ({ type = 'password', name = '', defaultValue = '', ha
                 numberOfLines={4}
                 onChangeText={handleInputOnChange}
                 style={{
-                    ...textCustom.textRegular,
-                    paddingHorizontal: root.sizeS,
+                    ...textCustom(theme).textRegular,
+                    paddingHorizontal: size.s,
                 }} />
         </Element>
     );

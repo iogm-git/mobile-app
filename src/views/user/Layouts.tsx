@@ -1,28 +1,28 @@
-import { root } from '@root/utils/Styles';
 import HeaderComp from '@root/components/common/header/HeaderComp';
-import UserMenuComp from '@root/components/common/header/UserMenuComp';
 import React from 'react'
 import { ScrollView, View } from 'react-native'
 import FooterComp from '@root/components/common/FooterComp';
+import { size } from '@root/utils/Styles';
+import { useSelector } from 'react-redux';
+import { RootState } from '@root/redux/store';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 
 interface LayoutsProps {
     children: React.ReactNode;
 }
 
 const Layouts = ({ children }: LayoutsProps) => {
+    const { colors } = useSelector((state: RootState) => state.theme)
+    const navigation = useNavigation()
+
     return (
-        <View style={{
-            backgroundColor: root.bgColor,
-            flex: 1
-        }}>
-            <HeaderComp>
-                <UserMenuComp />
-            </HeaderComp>
-            <ScrollView style={{ paddingHorizontal: root.sizeM }}>
+        <View style={{ flex: 1, backgroundColor: colors.bg }}>
+            <HeaderComp onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />
+            <ScrollView style={{ paddingHorizontal: size.m, backgroundColor: colors.bg, }}>
                 <View style={{
                     flex: 1,
-                    paddingVertical: root.sizeL,
-                    rowGap: root.sizeXx,
+                    paddingVertical: size.l,
+                    rowGap: size.m * 5,
                 }}>
                     {children}
                 </View>

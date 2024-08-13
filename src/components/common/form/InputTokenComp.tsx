@@ -1,15 +1,21 @@
-import { borderDefault, flexCustom, fontCustom, root } from '@root/utils/Styles';
+import { useSelector } from 'react-redux';
+import { TextInput, View, ViewStyle } from 'react-native';
 import React, { useState, useRef, PropsWithChildren } from 'react';
-import { TextInput, View, StyleSheet } from 'react-native';
+import { borderDefault, flexCustom, fontCustom, size } from '@root/utils/Styles';
+
 import Element from './Element';
+
+import { RootState } from '@root/redux/store';
 
 type InputTokenProps = PropsWithChildren<{
     name: string;
     length: number;
-    handleInputOnChange: (value: string[]) => void;
+    handleInputOnChange: (value: string) => void;
 }>
 
 const InputTokenComp = ({ name = '', length, handleInputOnChange }: InputTokenProps) => {
+    const { theme } = useSelector((state: RootState) => state.theme)
+
     const [token, setToken] = useState<string[]>(Array(length).fill(''));
     const inputRefs = Array(length).fill(null).map(() => useRef<TextInput>(null));
 
@@ -26,20 +32,29 @@ const InputTokenComp = ({ name = '', length, handleInputOnChange }: InputTokenPr
             }
         }
 
-        if (index === length - 1) {
-            if (newToken.every((digit) => digit !== '')) {
-                handleInputOnChange(newToken);
-            }
-        }
+        // if (index === length - 1) {
+        //     if (newToken.every((digit) => digit !== '')) {
+        handleInputOnChange(newToken.join(''));
+        //     }
+        // }
     };
 
     return (
         <Element name={name}>
-            <View style={styles.box}>
+            <View style={{
+                ...flexCustom.flexRowCenter as ViewStyle,
+                marginVertical: size.s
+            }}>
                 {token.map((digit, index) => (
                     <TextInput
                         key={index}
-                        style={styles.input}
+                        style={{
+                            ...borderDefault(theme).borderS,
+                            ...fontCustom(theme).fontMedium,
+                            width: 50,
+                            textAlign: 'center',
+                            fontSize: size.s,
+                        }}
                         defaultValue={digit}
                         onChangeText={(value) => handleInputChange(value, index)}
                         ref={inputRefs[index]}
@@ -51,19 +66,5 @@ const InputTokenComp = ({ name = '', length, handleInputOnChange }: InputTokenPr
         </Element>
     );
 };
-
-const styles = StyleSheet.create({
-    box: {
-        ...flexCustom.flexRowCenter,
-        marginVertical: root.sizeS
-    },
-    input: {
-        ...borderDefault.borderS,
-        ...fontCustom.fontMedium,
-        width: 50,
-        textAlign: 'center',
-        fontSize: root.sizeS,
-    },
-});
 
 export default InputTokenComp;

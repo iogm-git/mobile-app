@@ -1,24 +1,29 @@
-import { Text, TouchableOpacity } from 'react-native'
+import { useSelector } from 'react-redux';
 import React, { PropsWithChildren } from 'react'
-import { colorMap, root, buttonCustom, fontFamily } from '@root/utils/Styles'
+import { Text, TouchableOpacity, ViewStyle } from 'react-native'
+
+import { RootState } from '@root/redux/store';
+
+import { colorMap, buttonCustom, textCustom, size, color } from '@root/utils/Styles'
 
 type SubmitProps = PropsWithChildren<{
     text: string;
     type: 'primary' | 'warning' | 'danger' | 'success';
-    handleSubmitOnPress: () => void;
+    onPress: () => void;
 }>;
 
-const SubmitComp = ({ text, type, handleSubmitOnPress }: SubmitProps) => {
+const SubmitComp = ({ text, type, onPress }: SubmitProps) => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
 
     return (
-        <TouchableOpacity onPress={handleSubmitOnPress} style={{
-            ...buttonCustom.buttonCom,
-            backgroundColor: colorMap[type],
+        <TouchableOpacity onPress={onPress} style={{
+            ...buttonCustom(theme).buttonCom as ViewStyle,
+            backgroundColor: colorMap(theme)[type],
         }}>
             <Text style={{
-                fontFamily: fontFamily.medium,
-                fontSize: root.sizeM,
-                color: root.bgColor,
+                ...textCustom(theme).textMedium,
+                fontSize: size.m,
+                color: theme === 'dark' ? colors.text : colors.bg
             }}>{text}</Text>
         </TouchableOpacity>
     )

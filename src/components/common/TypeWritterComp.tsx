@@ -1,6 +1,9 @@
-import { root, textCustom } from '@root/utils/Styles';
-import React, { useState, useEffect } from 'react';
 import { Text } from 'react-native';
+import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+
+import { textCustom } from '@root/utils/Styles';
+import { RootState } from '@root/redux/store';
 
 interface TypewriterCompProps {
     data: string[];
@@ -8,6 +11,8 @@ interface TypewriterCompProps {
 }
 
 const TypewriterComp: React.FC<TypewriterCompProps> = ({ data, begin }) => {
+    const { theme } = useSelector((state: RootState) => state.theme)
+
     const [text, setText] = useState('');
     const [counter, setCounter] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -47,7 +52,7 @@ const TypewriterComp: React.FC<TypewriterCompProps> = ({ data, begin }) => {
     }, [text, counter, isDeleting, delay, delta, data]);
 
     return (
-        <Text style={textCustom.textBold}>{begin} {text}</Text>
+        <Text style={textCustom(theme).textBold}>{begin} {text}</Text>
     );
 };
 

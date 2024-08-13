@@ -1,24 +1,34 @@
-import { View } from 'react-native';
-import React from 'react';
-import { BASEURL } from '@root/utils/Env';
-import { root, flexCustom } from '@root/utils/Styles';
+import React, { PropsWithChildren } from 'react';
 import { SvgUri } from 'react-native-svg';
+import { useSelector } from 'react-redux';
+import { Text, View, ViewStyle } from 'react-native';
 
-const HeaderComp = ({ children }: any) => {
+import { flexCustom, size, textCustom } from '@root/utils/Styles';
+
+import { RootState } from '@root/redux/store';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+type HeaderProps = PropsWithChildren<{
+    onPress: () => void
+}>
+
+const HeaderComp = ({ onPress }: HeaderProps) => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
     return (
         <View style={{
-            ...flexCustom.flexRowBetween,
-            backgroundColor: root.bgColor,
-            padding: root.sizeM,
-            height: 63,
-            borderBottomWidth: 1,
-            borderBottomColor: root.borderColor,
+            ...flexCustom.flexRowBetween as ViewStyle,
+            backgroundColor: colors.bg,
+            paddingHorizontal: size.m,
+            paddingVertical: size.s
         }}>
-            <SvgUri uri={BASEURL + '/logo.svg'} style={{
-                maxHeight: 25,
-                maxWidth: 25,
+            <SvgUri uri={`https:/iogm.biz.id${theme === 'dark' ? '/logo-white.svg' : '/logo.svg'}`} style={{
+                maxHeight: 19,
+                maxWidth: 19,
             }} />
-            {children}
+            <TouchableOpacity onPress={onPress}>
+                <Text style={textCustom(theme).textLight}>Menu</Text>
+            </TouchableOpacity>
         </View >
     )
 }

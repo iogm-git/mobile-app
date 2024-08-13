@@ -1,5 +1,7 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+import { useSelector } from 'react-redux'
+import { ScrollView, StyleSheet, Text, View, ViewStyle } from 'react-native'
+
 import Layouts from '../Layouts'
 
 import UserCodeIcon from '@svg/common/code/user'
@@ -30,127 +32,149 @@ import SqlServerIcon from '@svg/common/code/programming/sql-server'
 import SvgIcon from '@svg/common/code/programming/svg'
 import VueIcon from '@svg/common/code/programming/vue'
 
-import TypewriterComp from '@root/components/common/TypeWritterComp'
-import { flexCustom, fontFamily, root, textCustom, borderDefault } from '@root/utils/Styles'
+import HandleComp from '@root/components/common/button/HandleComp'
+import NavigateComp from '@root/components/common/button/NavigateComp'
 import AccordionComp from '@root/components/specific/code/AccordionComp'
-import LinkComp from '@root/components/common/button/NavigateComp'
+import TypewriterComp from '@root/components/common/TypeWritterComp'
+
+
+import { flexCustom, fontFamily, textCustom, borderDefault, size, color } from '@root/utils/Styles'
+
+import { RootState } from '@root/redux/store'
 
 const HomeScreen = () => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
+    const styles = StyleSheet.create({
+        box: {
+            padding: size.m,
+            borderRadius: size.s,
+            rowGap: size.xxs,
+            backgroundColor: colors.thirdBg
+        },
+        iconWrapper: {
+            backgroundColor: colors.secondBg,
+            borderColor: colors.border,
+            padding: size.m,
+            borderRadius: 99,
+            borderWidth: 1,
+            marginRight: size.m
+        },
+        wrapper: {
+            flexDirection: 'row',
+            columnGap: size.s,
+            padding: size.m,
+            backgroundColor: color.transBlue,
+            borderRadius: size.s,
+        }
+    })
+
     return (
         <Layouts>
-            <View>
+            <View style={{ rowGap: size.m }}>
                 <UserCodeIcon />
+                <View>
+                    <TypewriterComp begin='Welcome, ' data={['Student.', 'Instructor.', 'Visitor.']} />
+                    <Text style={textCustom(theme).textRegular}>This application is an online coding learning platform, you can use it wherever and whenever you want. Join as a learner or as a material provider.</Text>
+                </View>
+                <View style={flexCustom.flexRowStart as ViewStyle}>
+                    <View style={styles.box}>
+                        <Text style={textCustom(theme).textMedium}>6+</Text>
+                        <Text style={textCustom(theme).textRegular}>Courses</Text>
+                    </View>
+                    <View style={styles.box}>
+                        <Text style={textCustom(theme).textMedium}>1+</Text>
+                        <Text style={textCustom(theme).textRegular}>Instructors</Text>
+                    </View>
+                    <View style={styles.box}>
+                        <Text style={textCustom(theme).textMedium}>1+</Text>
+                        <Text style={textCustom(theme).textRegular}>Students</Text>
+                    </View>
+                </View>
+                <HandleComp text='Learn More' type='primary' onPress={() => console.log('asd')} children={
+                    <ScrollIcon fill={color.blue} width={size.l} height={size.l} />
+                } />
             </View>
-            <View>
-                <TypewriterComp begin='Welcome, ' data={['Student.', 'Instructor.', 'Visitor.']} />
-                <Text style={textCustom.textRegular}>This application is an online coding learning platform, you can use it wherever and whenever you want. Join as a learner or as a material provider.</Text>
-            </View>
-            <View style={flexCustom.flexRowStart}>
-                <View style={styles.box}>
-                    <Text style={textCustom.textMedium}>6+</Text>
-                    <Text style={textCustom.textRegular}>Courses</Text>
-                </View>
-                <View style={styles.box}>
-                    <Text style={textCustom.textMedium}>1+</Text>
-                    <Text style={textCustom.textRegular}>Instructors</Text>
-                </View>
-                <View style={styles.box}>
-                    <Text style={textCustom.textMedium}>1+</Text>
-                    <Text style={textCustom.textRegular}>Students</Text>
-                </View>
-                <TouchableOpacity style={{
-                    ...flexCustom.flexRowStart,
-                    paddingHorizontal: root.sizeM,
-                    paddingVertical: root.sizeM / 2,
-                    borderColor: root.blueColor,
-                    borderWidth: 1,
-                    borderRadius: root.radiusS
-                }}>
-                    <Text style={{
-                        fontFamily: fontFamily.medium,
-                        fontSize: root.sizeM,
-                        color: root.blueColor
-                    }}>Learn More</Text>
-                    <ScrollIcon fill={root.blueColor} width={root.sizeL} height={root.sizeL} />
-                </TouchableOpacity>
 
+            <View style={{ rowGap: size.m }}>
+                <ScrollView horizontal>
+                    <View style={styles.iconWrapper}>
+                        <AjaxIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <CppIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <CssIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <DockerIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <ExpressIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <FirebaseIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <GitIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <GithubIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={[styles.iconWrapper, { marginRight: 0 }]}>
+                        <HtmlIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                </ScrollView>
+                <ScrollView horizontal>
+                    <View style={styles.iconWrapper}>
+                        <JavascriptIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <LaravelIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <MongodbIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <MysqlIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <PhpIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <PostgreSqlIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <PythonIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <ReactIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <SqlServerIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={styles.iconWrapper}>
+                        <SvgIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                    <View style={[styles.iconWrapper, { marginRight: 0 }]}>
+                        <VueIcon width={size.xxx} height={size.xxx} />
+                    </View>
+                </ScrollView>
             </View>
-            <ScrollView horizontal>
-                <View style={styles.iconWrapper}>
-                    <AjaxIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <CppIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <CssIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <DockerIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <ExpressIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <FirebaseIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <GitIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <GithubIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={[styles.iconWrapper, { marginRight: 0 }]}>
-                    <HtmlIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-            </ScrollView>
-            <ScrollView horizontal>
-                <View style={styles.iconWrapper}>
-                    <JavascriptIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <LaravelIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <MongodbIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <MysqlIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <PhpIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <PostgreSqlIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <PythonIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <ReactIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <SqlServerIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={styles.iconWrapper}>
-                    <SvgIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-                <View style={[styles.iconWrapper, { marginRight: 0 }]}>
-                    <VueIcon width={root.sizeXxx} height={root.sizeXxx} />
-                </View>
-            </ScrollView>
+
             <View style={{
-                ...borderDefault.borderS,
-                backgroundColor: root.thirdBgColor,
-                padding: root.sizeM
+                ...borderDefault(theme).borderS,
+                backgroundColor: colors.thirdBg,
+                padding: size.m
             }}>
                 <View style={{ alignItems: 'center' }}>
-                    <Text style={textCustom.textBold}>
+                    <Text style={textCustom(theme).textBold}>
                         Student
                     </Text>
                 </View>
                 <View style={{
-                    rowGap: root.sizeM
+                    rowGap: size.m
                 }}>
                     <AccordionComp title='Choose a course' content='Find the perfect online course for you with this platform. Explore various options based on your interests and goals. With just a few clicks, you can choose a course that suits your preferences, empowering you to pursue your interests from anywhere.' />
                     <AccordionComp title='Make a payment' content='Securely complete your transaction with ease. Choose your preferred payment method and make a swift, hassle-free payment to access your selected course or services.' />
@@ -159,17 +183,17 @@ const HomeScreen = () => {
                 </View>
             </View>
             <View style={{
-                ...borderDefault.borderS,
-                backgroundColor: root.thirdBgColor,
-                padding: root.sizeM
+                ...borderDefault(theme).borderS,
+                backgroundColor: colors.thirdBg,
+                padding: size.m
             }}>
                 <View style={{ alignItems: 'center' }}>
-                    <Text style={textCustom.textBold}>
+                    <Text style={textCustom(theme).textBold}>
                         Instructor
                     </Text>
                 </View>
                 <View style={{
-                    rowGap: root.sizeM
+                    rowGap: size.m
                 }}>
                     <AccordionComp title='Provide courses' content='As an instructor, offer your expertise to eager learners. Create and deliver engaging courses tailored to your niche, empowering students to achieve their goals and expand their knowledge under your guidance.' />
                     <AccordionComp title='Determine the price' content='Set the price for your course content. Determine the value of your expertise and resources, ensuring fair compensation for your efforts while attracting interested learners.' />
@@ -178,62 +202,38 @@ const HomeScreen = () => {
             </View>
             <View>
                 <MemberCodeIcon />
-                <Text style={textCustom.textBold}>Be part of an inspiring learning journey!</Text>
-                <Text style={textCustom.textRegular}>Join as our mentor and share your knowledge and experience with the next generation.</Text>
+                <Text style={textCustom(theme).textBold}>Be part of an inspiring learning journey!</Text>
+                <Text style={textCustom(theme).textRegular}>Join as our mentor and share your knowledge and experience with the next generation.</Text>
             </View>
             <View style={{
-                rowGap: root.sizeM
+                rowGap: size.m
             }}>
                 <StudentCodeIcon />
                 <View style={styles.wrapper}>
-                    <ChecklistIcon fill={root.blueColor} width={root.sizeL} height={root.sizeL} />
-                    <Text style={textCustom.textRegular}>Flexibility of Time</Text>
+                    <ChecklistIcon fill={color.blue} width={size.l} height={size.l} />
+                    <Text style={textCustom(theme).textRegular}>Flexibility of Time</Text>
                 </View>
                 <View style={styles.wrapper}>
-                    <ChecklistIcon fill={root.blueColor} width={root.sizeL} height={root.sizeL} />
-                    <Text style={textCustom.textRegular}>Career Advancement</Text>
+                    <ChecklistIcon fill={color.blue} width={size.l} height={size.l} />
+                    <Text style={textCustom(theme).textRegular}>Career Advancement</Text>
                 </View>
                 <View style={styles.wrapper}>
-                    <ChecklistIcon fill={root.blueColor} width={root.sizeL} height={root.sizeL} />
-                    <Text style={textCustom.textRegular}>Lifetime Access</Text>
+                    <ChecklistIcon fill={color.blue} width={size.l} height={size.l} />
+                    <Text style={textCustom(theme).textRegular}>Lifetime Access</Text>
                 </View>
                 <View style={styles.wrapper}>
-                    <ChecklistIcon fill={root.blueColor} width={root.sizeL} height={root.sizeL} />
-                    <Text style={textCustom.textRegular}>Self-Learning Development</Text>
+                    <ChecklistIcon fill={color.blue} width={size.l} height={size.l} />
+                    <Text style={textCustom(theme).textRegular}>Self-Learning Development</Text>
                 </View>
                 <View style={styles.wrapper}>
-                    <ChecklistIcon fill={root.blueColor} width={root.sizeL} height={root.sizeL} />
-                    <Text style={textCustom.textRegular}>Certificates or Recognition</Text>
+                    <ChecklistIcon fill={color.blue} width={size.l} height={size.l} />
+                    <Text style={textCustom(theme).textRegular}>Certificates or Recognition</Text>
                 </View>
             </View>
-            <LinkComp text='See Course' type='primary' to='code-guest-Courses' />
+            <NavigateComp text='See Course' type='primary' to='Courses' />
         </Layouts>
     )
 }
-
-const styles = StyleSheet.create({
-    box: {
-        padding: root.sizeM,
-        borderRadius: root.radiusS,
-        backgroundColor: root.thirdBgColor,
-        rowGap: root.sizeXxs
-    },
-    iconWrapper: {
-        padding: root.sizeM,
-        backgroundColor: root.secondBgColor,
-        borderColor: root.borderColor,
-        borderRadius: 99,
-        borderWidth: 1,
-        marginRight: root.sizeM
-    },
-    wrapper: {
-        flexDirection: 'row',
-        columnGap: root.sizeS,
-        padding: root.sizeM,
-        backgroundColor: root.transblueColor,
-        borderRadius: root.radiusS,
-    }
-})
 
 export default HomeScreen
 

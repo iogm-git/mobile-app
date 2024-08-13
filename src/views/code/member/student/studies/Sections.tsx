@@ -1,40 +1,143 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+
 import Layouts from '@root/views/code/Layouts'
-import { borderDefault, buttonCustom, buttonDefault, flexCustom, fontCustom, root, textCustom } from '@root/utils/Styles'
-import NavigateComp from '@root/components/common/button/NavigateComp'
-import { useNavigation } from '@react-navigation/native'
+
+import { borderDefault, color, fontCustom, size, textCustom } from '@root/utils/Styles'
+
 import CardComp from '@root/components/specific/code/member/card/CardComp'
+import ModalComp from '@root/components/common/alert/ModalComp'
+import BadgeComp from '@root/components/common/alert/BadgeComp'
+import HandleComp from '@root/components/common/button/HandleComp'
+import LoadingComp from '@root/components/common/LoadingComp'
+import NavigateComp from '@root/components/common/button/NavigateComp'
+
+import { CodeTabsStackParamList } from '@root/utils/Navigation'
+
+import { RootState } from '@root/redux/store'
+import { studentCertificateActions, studentCertificatesActions, studentSectionsActions, studentUpdateCompletedLecturesActions } from '@root/redux/code/actions/member'
+
+type RouteParams = {
+    data: any
+}
 
 const Sections = () => {
-    const navigation = useNavigation()
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
+    const dispatch = useDispatch()
+
+    const navigation = useNavigation<NavigationProp<CodeTabsStackParamList>>()
+
+    const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>()
+    const { courseId, title } = route.params.data
+
+    const [complete, setComplete] = useState(false)
+    const { loading: certificatesLoading } = useSelector((state: RootState) => state.code.studentCertificatesResult)
+    const { data: sections, loading: sectionsLoading } = useSelector((state: RootState) => state.code.studentSectionsResult)
+    const { data: courseProgress, loading: courseProgressLoading } = useSelector((state: RootState) => state.code.studentCourseProgressResult)
+    const { data: completedLecturesSuccess, loading: completedLecturesLoading } = useSelector((state: RootState) => state.code.studentUpdateCompletedLecturesResult)
+
+    useEffect(() => {
+        if (!courseId || courseId == null) {
+            navigation.navigate('Member', { screen: 'Student', params: { screen: 'Courses' } })
+        } else {
+            dispatch(studentSectionsActions.init(courseId))
+        }
+
+    }, [])
+
+    useEffect(() => {
+        if ((courseProgress && courseProgress) && (sections && sections)) {
+            let cp = courseProgress.reduce((acc: any, obj: any) => obj.course_id === (courseId) ? acc + 1 : acc, 0)
+            let s = sections.length
+
+            if (cp === s) setComplete(true)
+        }
+
+    }, [courseProgress, courseProgressLoading])
+
+    const modalClose = () => {
+        dispatch(studentUpdateCompletedLecturesActions.success(null))
+        dispatch(studentCertificatesActions.init())
+    }
 
     return (
         <Layouts>
-            <Text style={textCustom.textBold}>PHP</Text>
-            <Text style={textCustom.textRegular}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio doloribus nostrum vel tenetur. Mollitia provident laborum adipisci eos commodi, porro ex qui ipsam est quod impedit consequatur et doloremque explicabo maxime expedita quibusdam quaerat sapiente nulla quae repudiandae nobis. Eaque nulla qui modi debitis perspiciatis dolorem illo, iusto odio? Nemo explicabo repellat eos aut ab, minima alias libero delectus vel deserunt temporibus saepe molestias nisi obcaecati cum impedit sequi qui odit harum? Suscipit explicabo sequi impedit. Sed quo harum necessitatibus ab aliquid dolore praesentium consectetur nihil rem maiores reprehenderit aperiam, voluptatum dicta porro optio impedit aspernatur, maxime corporis, minus blanditiis?
-            </Text>
+            <View style={{ rowGap: size.l }}>
+                <Text style={textCustom(theme).textBold}>{title}</Text>
 
-            <NavigateComp text='Back' type='warning' goBack />
-            <Text style={textCustom.textLight}>Complete all the material then you will get a certificate.</Text>
-            <TouchableOpacity style={[buttonCustom.buttonCom, { borderColor: root.greenColor, borderWidth: 1 }]}>
-                <Text style={[fontCustom.fontMedium, { color: root.greenColor }]}>Download Certificate</Text>
-            </TouchableOpacity>
+                <Text style={textCustom(theme).textLight}>Complete all the material then you will get a certificate.</Text>
 
-            <CardComp order={1} additional={
-                <>
-                    <TouchableOpacity onPress={() => navigation.navigate('code-member-student-Lessons')} style={[buttonDefault.buttonSmall, { borderColor: root.blueColor, borderWidth: 1 }]}>
-                        <Text style={[textCustom.textLight, { color: root.blueColor }]}>See</Text>
-                    </TouchableOpacity>
-                    <Text style={textCustom.textLight}>Uncompleted</Text>
-                </>
-            }>
-                <View style={[borderDefault.borderS, { rowGap: root.sizeXs, backgroundColor: root.secondBgColor, padding: root.sizeXs / 2 }]}>
-                    <Text style={[textCustom.textLight, { textAlign: 'center' }]}>Title</Text>
-                    <Text style={textCustom.textRegular}>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sed culpa iusto dolores aliquam eaque modi possimus magni dolorum beatae voluptas.</Text>
-                </View>
-            </CardComp>
+                {(certificatesLoading || completedLecturesLoading) ? <LoadingComp type='primary' /> : complete &&
+                    <HandleComp text='Download Certificate' type='success' onPress={() => {
+                        dispatch(studentUpdateCompletedLecturesActions.init({
+                            course_id: courseId,
+                            section: sections[sections.length - 1].title
+                        }))
+                        dispatch(studentUpdateCompletedLecturesActions.failure(null))
+                        dispatch(studentUpdateCompletedLecturesActions.success(null))
+                        setTimeout(() => {
+                            dispatch(studentCertificateActions.init())
+                        }, 1000);
+                    }} />
+                }
+
+                {(sectionsLoading || courseProgressLoading) ? <LoadingComp type='primary' /> :
+                    sections && sections.map((value: any, index: number) => (
+                        <CardComp key={index} order={index + 1} additional={
+                            <>
+                                <HandleComp small text='See' type='primary' onPress={() => navigation.navigate('Member', {
+                                    screen: 'Student',
+                                    params: {
+                                        screen: 'Lessons',
+                                        params: {
+                                            data: {
+                                                courseId: courseId,
+                                                sectionId: value.id,
+                                                title: value.title
+                                            }
+                                        }
+                                    }
+                                })} />
+                                <Text style={[fontCustom(theme).fontLight, {
+                                    fontSize: size.s,
+                                    color: courseProgress.length ?
+                                        (courseProgress[index] &&
+                                            courseProgress[index].completed_lectures &&
+                                            courseProgress[index].completed_lectures.status === 'completed' ? color.green : color.red) : color.red
+                                }]}>
+                                    {courseProgress.length ?
+                                        (courseProgress[index] &&
+                                            courseProgress[index].completed_lectures &&
+                                            courseProgress[index].completed_lectures.status === 'completed' ? 'Completed' : 'Uncompleted') : 'Uncompleted'}
+                                </Text>
+                            </>
+                        }>
+                            <View style={[borderDefault(theme).borderS, { backgroundColor: colors.secondBg, padding: size.xs / 2 }]}>
+                                <Text style={textCustom(theme).textLight}>Title</Text>
+                                <Text style={textCustom(theme).textRegular}>{value.title}</Text>
+                            </View>
+                        </CardComp>
+                    ))}
+            </View>
+
+            {completedLecturesSuccess &&
+                <ModalComp title='Download Certificates' onClose={modalClose}>
+                    <View style={{ rowGap: size.s }}>
+                        <BadgeComp text={completedLecturesSuccess} type='success' />
+                        <NavigateComp
+                            text='My certificates'
+                            type='primary'
+                            to='Member'
+                            isNested
+                            nested={{ screen: 'Student', params: { screen: 'Certificates' } }}
+                            onPress={modalClose}
+                        />
+                    </View>
+                </ModalComp>
+            }
         </Layouts>
     )
 }

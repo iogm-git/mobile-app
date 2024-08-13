@@ -1,97 +1,133 @@
-import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { StyleSheet, Text, View, ViewStyle } from 'react-native'
+
 import Layouts from '../Layouts'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { borderDefault, flexCustom, root, textCustom } from '@root/utils/Styles'
+
+import { borderDefault, color, flexCustom, size, textCustom } from '@root/utils/Styles'
+
+import { RootState } from '@root/redux/store'
+import { downloadTransactionsActions, transactionInformationActions } from '@root/redux/shop/actions/member'
+
+import BadgeComp from '@root/components/common/alert/BadgeComp'
+import LoadingComp from '@root/components/common/LoadingComp'
+import NavigateComp from '@root/components/common/button/NavigateComp'
+import PaginationComp from '@root/components/common/PaginationComp'
+import SubmitComp from '@root/components/common/button/SubmitComp'
 
 const Transactions = () => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
+    const dispatch = useDispatch()
+    const { data, loading } = useSelector((state: RootState) => state.shop.transactionInformationResult)
+    const { loading: loadingDownload } = useSelector((state: RootState) => state.shop.downloadTransactionsResult)
+
+    useEffect(() => {
+
+    }, [data])
+
+    const styles = StyleSheet.create({
+        card: {
+            ...borderDefault(theme).borderS,
+            padding: size.m,
+            borderRadius: size.radiusS,
+            rowGap: size.xxs,
+            backgroundColor: colors.secondBg
+        },
+        box: {
+            ...borderDefault(theme).borderS,
+            rowGap: size.m,
+            padding: size.s,
+            borderRadius: size.radiusS,
+            backgroundColor: colors.thirdBg
+        },
+        pack: {
+            ...flexCustom.flexRowBetween as ViewStyle,
+        },
+        frag: {
+            ...borderDefault(theme).borderS,
+            borderRadius: size.radiusS,
+            padding: size.s,
+            backgroundColor: colors.secondBg,
+            flex: 1,
+        },
+        fragTitle: {
+            ...textCustom(theme).textLight,
+            ...borderDefault(theme).borderS,
+            backgroundColor: colors.thirdBg,
+            paddingVertical: size.xs / 2,
+            width: 75,
+            textAlign: 'center',
+            alignSelf: 'center',
+            marginBottom: size.xxs
+        },
+        textRegular: {
+            ...textCustom(theme).textRegular,
+            textAlign: 'center',
+            textTransform: 'capitalize'
+        },
+        textMedium: {
+            fontSize: size.m
+        }
+    })
+
     return (
         <Layouts>
-            <Text style={textCustom.textBold}>Transactions</Text>
-            <TouchableOpacity style={{
-                paddingHorizontal: root.sizeM,
-                paddingVertical: root.sizeXxs,
-                borderWidth: 1.5,
-                borderColor: root.blueColor,
-                borderRadius: root.radiusS
-            }}>
-                <Text style={[styles.textMedium, {
-                    textAlign: 'center',
-                    color: root.blueColor,
-                }]}>Download Transactions</Text>
-            </TouchableOpacity>
-            <View style={styles.card}>
-                <View style={flexCustom.flexRowBetween}>
-                    <Text style={textCustom.textLight}>1</Text>
-                    <Text style={textCustom.textLight}>29 Apr 2024</Text>
-                </View>
-                <View style={styles.box}>
-                    <Text style={styles.textRegular}>Web</Text>
-                    <View style={[flexCustom.flexRowBetween, styles.packBorder]}>
-                        <Text style={styles.textMedium}>w031</Text>
-                        <Text style={styles.textMedium}>car</Text>
-                        <Text style={styles.textMedium}>app_a</Text>
-                    </View>
-                </View>
-                <View style={styles.box}>
-                    <Text style={styles.textRegular}>Amount and Status</Text>
-                    <View style={[flexCustom.flexRowBetween, styles.packBorder]}>
-                        <Text style={styles.textRegular}>50.000</Text>
-                        <Text style={styles.textRegular}>unpaid</Text>
-                    </View>
-                </View>
+            <View style={{ rowGap: size.l }}>
+                <Text style={textCustom(theme).textBold}>Transactions</Text>
+                {loadingDownload ? <LoadingComp type='primary' /> :
+                    <SubmitComp text='Download Transactions' type='primary' onPress={() => dispatch(downloadTransactionsActions.init())} />
+                }
+
+                {loading ? <LoadingComp type='primary' /> : data && data.data && data.data.length > 0 ?
+                    <>
+                        {data.data.map((value: any, index: number) => (
+                            <View key={index} style={styles.card}>
+                                <View style={flexCustom.flexRowBetween as ViewStyle}>
+                                    <Text style={textCustom(theme).textLight}>{index + 1}</Text>
+                                    <Text style={textCustom(theme).textLight}>{value.date}</Text>
+                                </View>
+                                <View style={styles.box}>
+                                    <Text style={styles.textRegular}>Web</Text>
+                                    <View style={styles.pack}>
+                                        <View style={[styles.frag]}>
+                                            <Text style={styles.fragTitle}>Id</Text>
+                                            <Text style={styles.textRegular}>{value.id}</Text>
+                                        </View>
+                                        <View style={[styles.frag]}>
+                                            <Text style={styles.fragTitle}>Type</Text>
+                                            <Text style={styles.textRegular}>{value.type}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={[styles.frag]}>
+                                        <Text style={[styles.fragTitle, { width: 100 }]}>Category</Text>
+                                        <Text style={styles.textRegular}>{value.category}</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.box}>
+                                    <View style={styles.pack}>
+                                        <View style={[styles.frag]}>
+                                            <Text style={styles.fragTitle}>Amount</Text>
+                                            <Text style={styles.textRegular}>Rp. {value.amount}</Text>
+                                        </View>
+                                        <View style={[styles.frag]}>
+                                            <Text style={styles.fragTitle}>Status</Text>
+                                            <Text style={[styles.textRegular, { textTransform: 'capitalize', color: value.status === 'unpaid' ? color.red : color.green }]}>{value.status}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        ))}
+                        {data.links && <PaginationComp data={data.links} onPageChange={value => dispatch(transactionInformationActions.init(value))} />}
+                    </> :
+                    <>
+                        <BadgeComp text='No Transactions' type='warning' />
+                        <NavigateComp text='See Website' type='primary' to='ShopHomeScreen' />
+                    </>
+                }
             </View>
-            <View style={styles.card}>
-                <View style={flexCustom.flexRowBetween}>
-                    <Text style={textCustom.textLight}>1</Text>
-                    <Text style={textCustom.textLight}>29 Apr 2024</Text>
-                </View>
-                <View style={styles.box}>
-                    <Text style={styles.textRegular}>Web</Text>
-                    <View style={[flexCustom.flexRowBetween, styles.packBorder]}>
-                        <Text style={styles.textMedium}>w031</Text>
-                        <Text style={styles.textMedium}>car</Text>
-                        <Text style={styles.textMedium}>app_a</Text>
-                    </View>
-                </View>
-                <View style={styles.box}>
-                    <Text style={styles.textRegular}>Amount and Status</Text>
-                    <View style={[flexCustom.flexRowBetween, styles.packBorder]}>
-                        <Text style={styles.textRegular}>50.000</Text>
-                        <Text style={styles.textRegular}>unpaid</Text>
-                    </View>
-                </View>
-            </View>
-        </Layouts>
+        </Layouts >
     )
 }
-
-const styles = StyleSheet.create({
-    card: {
-        padding: root.sizeM,
-        backgroundColor: root.thirdBgColor,
-        borderRadius: root.radiusS,
-        rowGap: root.sizeXxs,
-    },
-    box: {
-        padding: root.sizeS,
-        backgroundColor: root.secondBgColor,
-        borderRadius: root.radiusS
-    },
-    packBorder: {
-        ...borderDefault.borderS,
-        paddingVertical: root.sizeXxs,
-        paddingHorizontal: root.sizeS,
-        backgroundColor: root.bgColor
-    },
-    textRegular: {
-        flex: 1,
-        textAlign: 'center',
-        ...textCustom.textRegular
-    },
-    textMedium: {
-        ...textCustom.textMedium,
-        fontSize: root.sizeM
-    }
-})
 
 export default Transactions

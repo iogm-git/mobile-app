@@ -1,101 +1,152 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
-import React from 'react'
+import { SvgUri } from 'react-native-svg'
+import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native'
+
 import Layouts from '../../Layouts'
-import { borderDefault, flexCustom, root, textCustom } from '@root/utils/Styles'
+
+import { borderDefault, flexCustom, fontCustom, size, textCustom } from '@root/utils/Styles'
 
 import UserIcon from '@svg/member/code/user'
 import CalendarIcon from '@svg/member/code/calendar'
 import AddressIcon from '@svg/member/code/location'
 
+import { RootState } from '@root/redux/store'
+
+import LoadingComp from '@root/components/common/LoadingComp'
+
+import { _getImage } from '@root/utils/Helper'
+
 const Profile = () => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
+    const { data: user } = useSelector((state: RootState) => state.user.meData)
+    const { data: member, loading } = useSelector((state: RootState) => state.code.codeMeResult)
+    const { data: courses, loading: coursesLoading } = useSelector((state: RootState) => state.code.studentCoursesResult)
+    const { data: certificates, loading: certificatesLoading } = useSelector((state: RootState) => state.code.studentCertificatesResult)
+    const { data: stashes, loading: stashesLoading } = useSelector((state: RootState) => state.code.studentStashesResult)
+    const { data: transactions, loading: transactionsLoading } = useSelector((state: RootState) => state.code.studentTransactionsResult)
+
+    useEffect(() => {
+
+    }, [member, courses])
+
+    const styles = StyleSheet.create({
+        image: {
+            width: 175,
+            height: 175,
+            borderRadius: size.radiusS,
+            overflow: 'hidden'
+        },
+        box: {
+            ...flexCustom.flexRowStart as ViewStyle,
+            ...borderDefault(theme).borderS,
+            padding: size.s,
+            backgroundColor: colors.thirdBg
+        },
+        key: {
+            ...textCustom(theme).textLight,
+            fontSize: size.xs,
+            width: 100
+        },
+        pack: {
+            ...borderDefault(theme).borderS,
+            backgroundColor: colors.bg,
+            paddingHorizontal: size.xxs,
+            paddingVertical: size.xs / 2
+        }
+    })
+
     return (
         <Layouts>
-            <Text style={textCustom.textBold}>Profile</Text>
-            <Image source={{ uri: 'https://scontent.cdninstagram.com/v/t51.29350-15/437375432_441314685089013_7185413258698744672_n.webp?stp=dst-jpg_e35&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgweDEzNTAuc2RyLmYyOTM1MCJ9&_nc_ht=scontent.cdninstagram.com&_nc_cat=109&_nc_ohc=FYmnaGTvz_UQ7kNvgH_UHNo&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzM0MzA4NzExMDA1MDUwNTMwNw%3D%3D.2-ccb7-5&oh=00_AYAR8-rMeBwIPTvifa8m_2pmI4RctMcTUYJyTP2bPGeXBQ&oe=664B7E51&_nc_sid=10d13b' }} style={styles.image} />
-            <View style={{ rowGap: root.sizeM }}>
-                <View style={styles.box}>
-                    <UserIcon width={root.sizeX} height={root.sizeX} fill={root.textColor} />
-                    <View style={styles.pack}>
-                        <View style={flexCustom.flexRowStart}>
-                            <Text style={styles.key}>Username</Text>
-                            <Text style={textCustom.textRegular}>: Fathia</Text>
+            <View style={{ rowGap: size.l }}>
+                <Text style={textCustom(theme).textBold}>Profile</Text>
+                {user && user.image && user.image.includes('.svg') ?
+                    <SvgUri height={200} width='100%' uri={_getImage(user.image)} /> :
+                    <Image source={{ uri: _getImage(user.image) }} style={[borderDefault(theme).borderS, { height: 200, width: 200 }]} />
+                }
+                {loading ? <LoadingComp type='primary' /> :
+                    member &&
+                    <>
+                        <View style={{ rowGap: size.m }}>
+                            <View style={styles.box}>
+                                <UserIcon width={size.l} height={size.l} fill={colors.text} />
+                                <View style={[flexCustom.flexRowStart as ViewStyle, { rowGap: size.xxs }]}>
+                                    <View style={styles.pack}>
+                                        <Text style={styles.key}>Username</Text>
+                                        <Text style={textCustom(theme).textRegular}>{member.username}</Text>
+                                    </View>
+                                    <View style={styles.pack}>
+                                        <Text style={styles.key}>Name</Text>
+                                        <Text style={textCustom(theme).textRegular}>{member.name}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                            <View style={styles.box}>
+                                <CalendarIcon width={size.l} height={size.l} fill={colors.text} />
+                                <View>
+                                    <View style={styles.pack}>
+                                        <Text style={styles.key}>Date of birth</Text>
+                                        <Text style={textCustom(theme).textRegular}>{member.dob}</Text>
+                                    </View>
+                                </View>
+                            </View>
+                            <View style={styles.box}>
+                                <AddressIcon width={size.l} height={size.l} fill={colors.text} />
+                                <View>
+                                    <View style={styles.pack}>
+                                        <Text style={styles.key}>Address</Text>
+                                        <Text style={textCustom(theme).textRegular}>{member.address}</Text>
+                                    </View>
+                                </View>
+                            </View>
                         </View>
-                        <View style={flexCustom.flexRowStart}>
-                            <Text style={styles.key}>Name</Text>
-                            <Text style={textCustom.textRegular}>: Fathia</Text>
+
+                    </>
+                }
+                <View style={{ rowGap: size.m }}>
+                    <View style={flexCustom.flexRowBetween as ViewStyle}>
+                        <View style={[styles.pack, { flex: 1 }]}>
+                            <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m, textAlign: 'center' }]}>Courses</Text>
+                            {coursesLoading ? <LoadingComp type='primary' /> :
+                                <Text style={[textCustom(theme).textLight, { textAlign: 'center' }]}>
+                                    {courses ? (courses.data && courses.data.length > 0 ? courses.data.length : '0') : '0'}
+                                </Text>
+                            }
+                        </View>
+                        <View style={[styles.pack, { flex: 1 }]}>
+                            <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m, textAlign: 'center' }]}>Certificates</Text>
+                            {certificatesLoading ? <LoadingComp type='primary' /> :
+                                <Text style={[textCustom(theme).textLight, { textAlign: 'center' }]}>
+                                    {certificates ? (certificates.data && certificates.data.length > 0 ? certificates.data.length : '0') : '0'}
+                                </Text>
+                            }
                         </View>
                     </View>
-                </View>
-                <View style={styles.box}>
-                    <CalendarIcon width={root.sizeX} height={root.sizeX} fill={root.textColor} />
-                    <View style={styles.pack}>
-                        <View style={flexCustom.flexRowStart}>
-                            <Text style={styles.key}>Date of birth</Text>
-                            <Text style={textCustom.textRegular}>: Fathia</Text>
+                    <View style={flexCustom.flexRowBetween as ViewStyle}>
+                        <View style={[styles.pack, { flex: 1 }]}>
+                            <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m, textAlign: 'center' }]}>Stashes</Text>
+                            {stashesLoading ? <LoadingComp type='primary' /> :
+                                <Text style={[textCustom(theme).textLight, { textAlign: 'center' }]}>
+                                    {stashes ? (stashes.data && stashes.data.length > 0 ? stashes.data.length : '0') : '0'}
+                                </Text>
+                            }
                         </View>
-                    </View>
-                </View>
-                <View style={styles.box}>
-                    <AddressIcon width={root.sizeX} height={root.sizeX} fill={root.textColor} />
-                    <View style={styles.pack}>
-                        <View style={flexCustom.flexRowStart}>
-                            <Text style={styles.key}>Address</Text>
-                            <Text style={textCustom.textRegular}>: Fathia</Text>
+                        <View style={[styles.pack, { flex: 1 }]}>
+                            <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m, textAlign: 'center' }]}>Transactions</Text>
+                            {transactionsLoading ? <LoadingComp type='primary' /> :
+                                <Text style={[textCustom(theme).textLight, { textAlign: 'center' }]}>
+                                    {transactions ? (transactions.data && transactions.data.length > 0 ? transactions.data.length : '0') : '0'}
+                                </Text>
+                            }
                         </View>
                     </View>
                 </View>
             </View>
 
-            <View style={{ rowGap: root.sizeM }}>
-                <View style={flexCustom.flexRowStart}>
-                    <View style={styles.pack}>
-                        <Text style={textCustom.textMedium}>Courses</Text>
-                        <Text style={textCustom.textLight}>5</Text>
-                    </View>
-                    <View style={styles.pack}>
-                        <Text style={textCustom.textMedium}>Certificates</Text>
-                        <Text style={textCustom.textLight}>5</Text>
-                    </View>
-                </View>
-                <View style={flexCustom.flexRowStart}>
-                    <View style={styles.pack}>
-                        <Text style={textCustom.textMedium}>Stashes</Text>
-                        <Text style={textCustom.textLight}>5</Text>
-                    </View>
-                    <View style={styles.pack}>
-                        <Text style={textCustom.textMedium}>Transactions</Text>
-                        <Text style={textCustom.textLight}>5</Text>
-                    </View>
-                </View>
-            </View>
 
         </Layouts>
     )
 }
-
-const styles = StyleSheet.create({
-    image: {
-        width: 175,
-        height: 175,
-        borderRadius: root.radiusS,
-        overflow: 'hidden'
-    },
-    box: {
-        ...flexCustom.flexRowStart,
-        ...borderDefault.borderS,
-        padding: root.sizeS,
-        backgroundColor: root.thirdBgColor
-    },
-    pack: {
-        flex: 1,
-        ...borderDefault.borderS,
-        backgroundColor: root.secondBgColor,
-        padding: root.sizeS
-    },
-    key: {
-        ...flexCustom.flexRowStart,
-        width: 70
-    }
-})
 
 export default Profile

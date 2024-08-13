@@ -1,1 +1,0 @@
-export const BASEURL = 'https://iogm.biz.id'

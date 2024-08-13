@@ -1,7 +1,12 @@
+import { useSelector } from 'react-redux';
 import React, { useState } from 'react';
 import { TextInput, Text, TouchableOpacity } from 'react-native';
-import { root, textCustom } from '@root/utils/Styles';
+
+import { fontCustom, size, textCustom } from '@root/utils/Styles';
+
 import Element from './Element';
+
+import { RootState } from '@root/redux/store';
 
 type InputTextProps = {
     name: string;
@@ -12,6 +17,7 @@ type InputTextProps = {
 
 const InputTextComp = ({ type = 'text', name = '', defaultValue = '', handleInputOnChange }: InputTextProps) => {
     const [showPassword, setShowPassword] = useState(false);
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -21,15 +27,17 @@ const InputTextComp = ({ type = 'text', name = '', defaultValue = '', handleInpu
         <Element name={name}>
             <TextInput
                 autoComplete='off'
+                value={defaultValue}
                 defaultValue={defaultValue}
                 keyboardType={type === 'numeric' ? 'numeric' : 'default'}
                 onChangeText={handleInputOnChange}
                 readOnly={type === 'disabled'}
                 secureTextEntry={!showPassword && type === 'password'}
-                style={{
-                    ...textCustom.textRegular,
-                    paddingHorizontal: root.sizeS,
-                }} />
+                style={[type === 'disabled' ? fontCustom(theme).fontLight : fontCustom(theme).fontRegular, {
+                    paddingHorizontal: size.s,
+                    fontSize: size.m,
+                    color: type === 'disabled' ? colors.link : colors.text
+                }]} />
             {type === 'password' && (
                 <TouchableOpacity
                     style={{
@@ -38,11 +46,11 @@ const InputTextComp = ({ type = 'text', name = '', defaultValue = '', handleInpu
                         right: 0,
                         bottom: 0,
                         justifyContent: 'center',
-                        paddingHorizontal: root.sizeS
+                        paddingHorizontal: size.s
                     }}
                     onPress={togglePasswordVisibility}
                 >
-                    <Text style={textCustom.textLight}>{showPassword ? 'Hide' : 'Show'}</Text>
+                    <Text style={textCustom(theme).textLight}>{showPassword ? 'Hide' : 'Show'}</Text>
                 </TouchableOpacity>)
             }
         </Element>

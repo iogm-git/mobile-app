@@ -4,19 +4,23 @@
     "baseUrl": "./",
     "paths": {
       "@root/*": [
-        "./src/*",
+        "./src/*"
       ],
       "@svg/*": [
         "./assets/svg/*"
       ],
       "@image/*": [
         "./assets/image/*"
+      ],
+      "@env": [
+        ".env"
       ]
     }
   },
   "include": [
     "src",
     "assets/svg",
-    "assets/image"
+    "assets/image",
+    ".env"
   ]
 }

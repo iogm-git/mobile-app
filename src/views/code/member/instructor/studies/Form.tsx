@@ -1,129 +1,262 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native'
-import React, { PropsWithChildren, useState } from 'react'
-import Layouts from '@root/views/code/Layouts'
-import { borderDefault, flexCustom, fontCustom, root, textCustom } from '@root/utils/Styles'
-import NavigateComp from '@root/components/common/button/NavigateComp'
-import ModalComp from '@root/components/common/alert/ModalComp'
+import { useDispatch, useSelector } from 'react-redux'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
+import { View, Text, TextInput, TouchableOpacity, ViewStyle } from 'react-native'
 
-import AjaxIcon from '@svg/common/code/programming/ajax'
-import CppIcon from '@svg/common/code/programming/cpp'
-import CssIcon from '@svg/common/code/programming/css'
-import DockerIcon from '@svg/common/code/programming/docker'
-import ExpressIcon from '@svg/common/code/programming/express'
-import FirebaseIcon from '@svg/common/code/programming/firebase'
-import GitIcon from '@svg/common/code/programming/git'
-import GithubIcon from '@svg/common/code/programming/github'
-import HtmlIcon from '@svg/common/code/programming/html'
-import JavascriptIcon from '@svg/common/code/programming/javascript'
-import LaravelIcon from '@svg/common/code/programming/laravel'
-import MongoDbIcon from '@svg/common/code/programming/mongodb'
-import MysqlIcon from '@svg/common/code/programming/mysql'
-import PhpIcon from '@svg/common/code/programming/php'
-import PostgreSqlIcon from '@svg/common/code/programming/postgre-sql'
-import PythonIcon from '@svg/common/code/programming/python'
-import ReactIcon from '@svg/common/code/programming/react'
-import SqlServerIcon from '@svg/common/code/programming/sql-server'
-import SvgIcon from '@svg/common/code/programming/svg'
-import VueIcon from '@svg/common/code/programming/vue'
+import Layouts from '@root/views/code/Layouts'
+
+import { useForm } from '@root/utils/Form'
+import { borderDefault, flexCustom, fontCustom, size, textCustom } from '@root/utils/Styles'
+
+import ModalComp from '@root/components/common/alert/ModalComp'
+import BadgeComp from '@root/components/common/alert/BadgeComp'
+import LoadingComp from '@root/components/common/LoadingComp'
+import NavigateComp from '@root/components/common/button/NavigateComp'
+
 import SubmitComp from '@root/components/common/button/SubmitComp'
 
-const icons = {
-    ajax: AjaxIcon, 'c++': CppIcon, css: CssIcon, docker: DockerIcon,
-    express: ExpressIcon, firebase: FirebaseIcon, git: GitIcon, github: GithubIcon,
-    html: HtmlIcon, javascript: JavascriptIcon, laravel: LaravelIcon, mongodb: MongoDbIcon,
-    mysql: MysqlIcon, php: PhpIcon, 'postgre-sql': PostgreSqlIcon, python: PythonIcon,
-    react: ReactIcon, 'sql-server': SqlServerIcon, svg: SvgIcon, vue: VueIcon
-};
+import { RootState } from '@root/redux/store'
+import { instructorStoreCourseActions, instructorStudiesActions, instructorUpdateCourseActions } from '@root/redux/code/actions/member'
+import { RouteProp, useRoute } from '@react-navigation/native'
+import ShowIconProgrammingComp from '@root/components/specific/code/member/instructor/ShowIconProgrammingComp'
 
 type FormProps = PropsWithChildren<{
     type: string
 }>
 
-const Form = ({ type }: FormProps) => {
-    const [icon, setIcon] = useState({ show: false, svg: '-- Choose Icon --' })
+type RouteParams = {
+    data?: any
+}
 
-    const IconButtons = Object.entries(icons).map(([name, IconComponent]) => (
-        <TouchableOpacity
-            key={name}
-            style={[borderDefault.borderS, { padding: root.sizeS }]}
-            onPress={() => setIcon({ show: false, svg: name })}
-        >
-            <IconComponent width={root.sizeXxxx} height={root.sizeXxxx} />
-        </TouchableOpacity>
-    ));
+const Form = ({ type }: FormProps) => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
+    const dispatch = useDispatch()
+
+    const { data: storeSuccess, error: storeError, loading: storeLoading } = useSelector((state: RootState) => state.code.instructorStoreCourseResult)
+    const { data: updateSuccess, error: updateError, loading: updateLoading } = useSelector((state: RootState) => state.code.instructorUpdateCourseResult)
+
+    const modalClose = () => {
+        dispatch(instructorStudiesActions.init())
+        if (type === 'store') {
+            setFormData({
+                title: '',
+                description: '',
+                price: '',
+                icon_svg: '',
+                level: '',
+                status: ''
+            })
+        }
+        dispatch(instructorStoreCourseActions.success(null))
+        dispatch(instructorUpdateCourseActions.success(null))
+    }
+
+    const errorClose = () => {
+        type === 'store' ?
+            dispatch(instructorStoreCourseActions.failure(null)) :
+            dispatch(instructorUpdateCourseActions.failure(null))
+    }
+
+    const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>()
+
+    const { courseId, courseTitle, description, price, iconSvg, level, status } = route.params.data
+
+    const initialState = {
+        id: courseId ? courseId : '',
+        title: courseTitle ? courseTitle : '',
+        description: description ? description : '',
+        price: price ? price : '',
+        icon_svg: iconSvg ? iconSvg : '',
+        level: level ? level : '',
+        status: status ? status : ''
+    }
+
+    const { formData, setFormData, handleCustomChange } = useForm(initialState)
+
+    const [iconShow, setIconShow] = useState(false)
+    const [activeLevel, setActiveLevel] = useState('')
+    const [activeStatus, setActiveStatus] = useState('')
+
+    useEffect(() => {
+        if (level) {
+            setActiveLevel(level)
+            setActiveStatus(status)
+        }
+    }, [])
 
     return (
         <Layouts>
-            <Text style={[textCustom.textBold, { textTransform: 'capitalize' }]}>{type} Course</Text>
-            <NavigateComp text='Cancel' type='warning' goBack />
-            <Text style={[textCustom.textMedium, {
-                paddingVertical: root.sizeXs,
-                borderTopColor: root.borderColor,
-                borderTopWidth: 1,
-            }]}>Form</Text>
-            <View>
-                <Text style={[fontCustom.fontBold, { fontSize: root.sizeM }]}>Title</Text>
-                <TextInput style={[borderDefault.borderS, textCustom.textRegular]} />
-            </View>
+            <View style={{ rowGap: size.l }}>
+                <Text style={[textCustom(theme).textBold, { textTransform: 'capitalize' }]}>{type} Course</Text>
 
-            <View>
-                <Text style={[fontCustom.fontBold, { fontSize: root.sizeM }]}>Description</Text>
-                <TextInput
-                    style={[textCustom.textRegular, borderDefault.borderS]}
-                    multiline
-                    numberOfLines={4}
-                />
-            </View>
+                <NavigateComp
+                    text='Cancel'
+                    type='warning'
+                    to='Member'
+                    isNested
+                    nested={{
+                        screen: 'Instructor',
+                        params: {
+                            screen: 'Courses',
+                        }
+                    }} />
 
-            <View>
-                <Text style={[fontCustom.fontBold, { fontSize: root.sizeM }]}>Icon Svg</Text>
-                <TouchableOpacity
-                    onPress={() => setIcon(prev => ({ ...prev, show: !prev.show }))}
-                    style={[borderDefault.borderS, { paddingHorizontal: root.sizeXs, paddingVertical: root.sizeM }]}
-                >
-                    <Text style={[textCustom.textRegular, { textTransform: 'capitalize' }]}>{icon.svg}</Text>
-                </TouchableOpacity>
-            </View>
+                <View>
+                    <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m }]}>Title</Text>
+                    <TextInput style={[
+                        borderDefault(theme).borderS,
+                        textCustom(theme).textRegular, {
+                            paddingHorizontal: size.xs,
+                            paddingVertical: size.xxs,
+                            marginBottom: size.xxs
+                        }]}
+                        value={formData.title}
+                        defaultValue={formData.title}
+                        onChangeText={value => handleCustomChange(value, 'title')}
+                    />
+                    {((storeError && storeError.title) || (updateError && updateError.title)) &&
+                        <BadgeComp text={storeError ? storeError.title[0] : updateError.title[0]} type='danger' onClose={errorClose} />}
+                </View>
 
-            {icon.show && (
-                <ModalComp title='Choose Icon Svg' onClose={() => setIcon(prev => ({ ...prev, show: false }))}>
-                    <View style={flexCustom.flexRowBetween}>
-                        {IconButtons}
+                <View>
+                    <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m }]}>Description</Text>
+                    <TextInput
+                        style={[
+                            textCustom(theme).textRegular,
+                            borderDefault(theme).borderS, {
+                                paddingHorizontal: size.xs,
+                                paddingVertical: size.xxs,
+                                marginBottom: size.xxs
+                            }]}
+                        value={formData.description}
+                        defaultValue={formData.description}
+                        onChangeText={value => handleCustomChange(value, 'description')}
+                        multiline
+                        numberOfLines={4}
+                    />
+                    {((storeError && storeError.description) || updateError && updateError.description) &&
+                        <BadgeComp text={storeError ? storeError.description[0] : updateError.description[0]} type='danger' onClose={errorClose} />}
+
+                    <View>
+                        <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m }]}>Price</Text>
+                        <TextInput style={[
+                            borderDefault(theme).borderS,
+                            textCustom(theme).textRegular, {
+                                paddingHorizontal: size.xs,
+                                paddingVertical: size.xxs,
+                                marginBottom: size.xxs
+                            }]}
+                            value={formData.price}
+                            defaultValue={formData.price}
+                            keyboardType='numeric'
+                            onChangeText={value => handleCustomChange(value, 'price')} />
+                        {((storeError && storeError.price) || updateError && updateError.price) &&
+                            <BadgeComp text={storeError ? storeError.price[0] : updateError.price[0]} type='danger' onClose={errorClose} />}
                     </View>
-                </ModalComp>
-            )}
 
-            <View>
-                <Text style={[fontCustom.fontBold, { fontSize: root.sizeM }]}>Level</Text>
-                <View style={flexCustom.flexRowStart}>
-                    <TouchableOpacity style={[borderDefault.borderS, { paddingHorizontal: root.sizeM, paddingVertical: root.sizeXxs }]}>
-                        <Text style={textCustom.textRegular}>Junior</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[borderDefault.borderS, { paddingHorizontal: root.sizeM, paddingVertical: root.sizeXxs }]}>
-                        <Text style={textCustom.textRegular}>Midle</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[borderDefault.borderS, { paddingHorizontal: root.sizeM, paddingVertical: root.sizeXxs }]}>
-                        <Text style={textCustom.textRegular}>Senior</Text>
-                    </TouchableOpacity>
+                    <View>
+                        <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m }]}>Icon Svg</Text>
+                        <TouchableOpacity onPress={() => setIconShow(true)}
+                            style={[
+                                borderDefault(theme).borderS, {
+                                    paddingHorizontal: size.xs,
+                                    paddingVertical: size.xxs,
+                                    marginBottom: size.xxs
+                                }]}
+                        >
+                            <Text style={[textCustom(theme).textRegular, { textTransform: 'capitalize' }]}>{formData.icon_svg === '' ? '--Choise Icon--' : formData.icon_svg}</Text>
+                        </TouchableOpacity>
+                        {((storeError && storeError.icon_svg) || updateError && updateError.icon_svg) &&
+                            <BadgeComp text={storeError ? storeError.icon_svg[0] : updateError.icon_svg[0]} type='danger' onClose={errorClose} />}
+                    </View>
+
+                    {iconShow && <ShowIconProgrammingComp onClose={() => setIconShow(false)} onChange={value => { handleCustomChange(value, 'icon_svg'); setIconShow(false) }} />}
+
+                    <View>
+                        <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m }]}>Level</Text>
+                        <View style={[flexCustom.flexRowStart as ViewStyle, { marginBottom: size.xxs }]}>
+                            <TouchableOpacity onPress={() => { handleCustomChange('junior', 'level'); setActiveLevel('junior') }} style={[
+                                borderDefault(theme).borderS, {
+                                    paddingHorizontal: size.m,
+                                    paddingVertical: size.xxs,
+                                    backgroundColor: activeLevel === 'junior' ? colors.text : colors.bg
+                                }]}>
+                                <Text style={[textCustom(theme).textRegular, { color: activeLevel === 'junior' ? colors.bg : colors.text }]}>Junior</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { handleCustomChange('middle', 'level'); setActiveLevel('middle') }} style={[
+                                borderDefault(theme).borderS, {
+                                    paddingHorizontal: size.m,
+                                    paddingVertical: size.xxs,
+                                    backgroundColor: activeLevel === 'middle' ? colors.text : colors.bg
+                                }]}>
+                                <Text style={[textCustom(theme).textRegular, { color: activeLevel === 'middle' ? colors.bg : colors.text }]}>Midle</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { handleCustomChange('senior', 'level'); setActiveLevel('senior') }} style={[
+                                borderDefault(theme).borderS, {
+                                    paddingHorizontal: size.m,
+                                    paddingVertical: size.xxs,
+                                    backgroundColor: activeLevel === 'senior' ? colors.text : colors.bg
+                                }]}>
+                                <Text style={[textCustom(theme).textRegular, { color: activeLevel === 'senior' ? colors.bg : colors.text }]}>Senior</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {((storeError && storeError.level) || updateError && updateError.level) &&
+                            <BadgeComp text={storeError ? storeError.level[0] : updateError.level[0]} type='danger' onClose={errorClose} />}
+                    </View>
+
+                    <View>
+                        <Text style={[fontCustom(theme).fontMedium, { fontSize: size.m }]}>Visibility</Text>
+                        <View style={[flexCustom.flexRowStart as ViewStyle, { marginBottom: size.xxs }]}>
+                            <TouchableOpacity onPress={() => { handleCustomChange('public', 'status'); setActiveStatus('public') }} style={[
+                                borderDefault(theme).borderS, {
+                                    paddingHorizontal: size.m,
+                                    paddingVertical: size.xxs,
+                                    backgroundColor: activeStatus === 'public' ? colors.text : colors.bg
+                                }]}>
+                                <Text style={[textCustom(theme).textRegular, { color: activeStatus === 'public' ? colors.bg : colors.text }]}>Public</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { handleCustomChange('student', 'status'); setActiveStatus('student') }} style={[
+                                borderDefault(theme).borderS, {
+                                    paddingHorizontal: size.m,
+                                    paddingVertical: size.xxs,
+                                    backgroundColor: activeStatus === 'student' ? colors.text : colors.bg
+                                }]}>
+                                <Text style={[textCustom(theme).textRegular, { color: activeStatus === 'student' ? colors.bg : colors.text }]}>Student</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { handleCustomChange('private', 'status'); setActiveStatus('private') }} style={[
+                                borderDefault(theme).borderS, {
+                                    paddingHorizontal: size.m,
+                                    paddingVertical: size.xxs,
+                                    backgroundColor: activeStatus === 'private' ? colors.text : colors.bg
+                                }]}>
+                                <Text style={[textCustom(theme).textRegular, { color: activeStatus === 'private' ? colors.bg : colors.text }]}>Private</Text>
+                            </TouchableOpacity>
+                        </View>
+                        {((storeError && storeError.status) || updateError && updateError.status) &&
+                            <BadgeComp text={storeError ? storeError.status[0] : updateError.status[0]} type='danger' onClose={errorClose} />}
+                    </View>
+
                 </View>
-            </View>
 
-            <View>
-                <Text style={[fontCustom.fontBold, { fontSize: root.sizeM }]}>Visibility</Text>
-                <View style={flexCustom.flexRowStart}>
-                    <TouchableOpacity style={[borderDefault.borderS, { paddingHorizontal: root.sizeM, paddingVertical: root.sizeXxs }]}>
-                        <Text style={textCustom.textRegular}>Public</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[borderDefault.borderS, { paddingHorizontal: root.sizeM, paddingVertical: root.sizeXxs }]}>
-                        <Text style={textCustom.textRegular}>Student</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[borderDefault.borderS, { paddingHorizontal: root.sizeM, paddingVertical: root.sizeXxs }]}>
-                        <Text style={textCustom.textRegular}>Private</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+                {(storeLoading || updateLoading) ? <LoadingComp type='primary' /> :
+                    <SubmitComp text='Submit' type='primary' onPress={() => {
+                        if (type === 'store') {
+                            dispatch(instructorStoreCourseActions.init(formData))
+                        } else {
+                            dispatch(instructorUpdateCourseActions.init(formData))
+                        }
+                    }
+                    } />}
 
-            <SubmitComp text='Submit' type='primary' handleSubmitOnPress={() => console.log('asd')} />
+                {(storeSuccess || updateSuccess) &&
+                    <ModalComp title='Course' onClose={modalClose}>
+                        <View style={{ rowGap: size.s }}>
+                            <BadgeComp text={storeSuccess ? storeSuccess : updateSuccess} type='success' onClose={modalClose} />
+                            <NavigateComp text='My courses' type='primary' to='Courses' onPress={modalClose} />
+                        </View>
+                    </ModalComp>
+                }
+            </View>
         </Layouts>
     )
 }

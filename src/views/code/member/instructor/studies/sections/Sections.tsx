@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, ViewStyle } from 'react-native'
+import React, { useEffect } from 'react'
 import Layouts from '@root/views/code/Layouts'
-import { borderDefault, flexCustom, fontCustom, root, textCustom } from '@root/utils/Styles'
+import { flexCustom, size, textCustom } from '@root/utils/Styles'
 
 import AjaxIcon from '@svg/common/code/programming/ajax'
 import CppIcon from '@svg/common/code/programming/cpp'
@@ -23,9 +23,19 @@ import ReactIcon from '@svg/common/code/programming/react'
 import SqlServerIcon from '@svg/common/code/programming/sql-server'
 import SvgIcon from '@svg/common/code/programming/svg'
 import VueIcon from '@svg/common/code/programming/vue'
+
 import NavigateComp from '@root/components/common/button/NavigateComp'
 import CardSectionLessonComp from '@root/components/specific/code/member/instructor/CardSectionLessonComp'
-import SubmitComp from '@root/components/common/button/SubmitComp'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '@root/redux/store'
+import { _formatCurrency } from '@root/utils/Helper'
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { CodeTabsStackParamList } from '@root/utils/Navigation'
+import { instructorSectionsActions } from '@root/redux/code/actions/member'
+import LoadingComp from '@root/components/common/LoadingComp'
+import BadgeComp from '@root/components/common/alert/BadgeComp'
+import CardComp from '@root/components/specific/code/member/card/CardComp'
+import ElementComp from '@root/components/specific/code/member/card/ElementComp'
 
 const icons = {
     ajax: AjaxIcon, 'c++': CppIcon, css: CssIcon, docker: DockerIcon,
@@ -35,40 +45,112 @@ const icons = {
     react: ReactIcon, 'sql-server': SqlServerIcon, svg: SvgIcon, vue: VueIcon
 };
 
+type IconType = keyof typeof icons;
+
+type RouteParams = {
+    data: {
+        courseId: string;
+        courseTitle: string;
+        price: number;
+        iconSvg: IconType;
+        level: string;
+        status: string;
+    }
+}
+
 const Sections = () => {
-    const IconComp = icons['ajax']
+    const { theme } = useSelector((state: RootState) => state.theme)
+
+    const navigation = useNavigation<NavigationProp<CodeTabsStackParamList>>()
+
+    const route = useRoute<RouteProp<{ params: RouteParams }, 'params'>>()
+    const { courseId, courseTitle, price, iconSvg, level, status } = route.params.data
+
+    const IconComp = icons[iconSvg]
+
+    const dispatch = useDispatch()
+
+    const { data: sections, loading: sectionsLoading } = useSelector((state: RootState) => state.code.instructorSectionsResult)
+
+    useEffect(() => {
+        if (courseId) {
+            dispatch(instructorSectionsActions.init(courseId))
+        } else {
+            navigation.navigate('Member', { screen: 'Instructor', params: { screen: 'Courses' } })
+        }
+    }, [courseId])
 
     return (
         <Layouts>
-            <Text style={textCustom.textBold}>Sections</Text>
-            <IconComp width={root.sizeXxxx * 2} />
-            <View style={[borderDefault.borderS, { padding: root.sizeM, rowGap: root.sizeXxs, backgroundColor: root.secondBgColor }]}>
-                <View style={flexCustom.flexRowStart}>
-                    <Text style={[fontCustom.fontMedium, { fontSize: root.sizeM, width: 60 }]}>Title</Text>
-                    <Text style={textCustom.textRegular}>AJAX</Text>
+            <View style={{ rowGap: size.l }}>
+                <Text style={[textCustom(theme).textBold, { textAlign: 'center' }]}>Sections</Text>
+                <View style={{ alignSelf: 'center' }}>
+                    <IconComp width={size.xxxx * 2} />
                 </View>
-                <View style={flexCustom.flexRowStart}>
-                    <Text style={[fontCustom.fontMedium, { fontSize: root.sizeM, width: 60 }]}>Status</Text>
-                    <Text style={textCustom.textRegular}>Public</Text>
-                </View>
-                <View style={flexCustom.flexRowStart}>
-                    <Text style={[fontCustom.fontMedium, { fontSize: root.sizeM, width: 60 }]}>Price</Text>
-                    <Text style={textCustom.textRegular}>Rp. 15,000.00</Text>
-                </View>
-            </View>
-            <Text style={textCustom.textRegular}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio doloribus nostrum vel tenetur. Mollitia provident laborum adipisci eos commodi, porro ex qui ipsam est quod impedit consequatur et doloremque explicabo maxime expedita quibusdam quaerat sapiente nulla quae repudiandae nobis. Eaque nulla qui modi debitis perspiciatis dolorem illo, iusto odio? Nemo explicabo repellat eos aut ab, minima alias libero delectus vel deserunt temporibus saepe molestias nisi obcaecati cum impedit sequi qui odit harum? Suscipit explicabo sequi impedit. Sed quo harum necessitatibus ab aliquid dolore praesentium consectetur nihil rem maiores reprehenderit aperiam, voluptatum dicta porro optio impedit aspernatur, maxime corporis, minus blanditiis?
-            </Text>
+                <CardComp>
+                    <ElementComp keyword='title' value={courseTitle} />
+                    <ElementComp keyword='status' value={status} />
+                    <ElementComp keyword='level' value={level} />
+                    <ElementComp keyword='price' value={_formatCurrency(price)} />
+                </CardComp>
 
-            <View style={flexCustom.flexRowCenter}>
-                <NavigateComp text='Back' type='warning' goBack />
-                <NavigateComp text='Add Section' type='primary' to='code-member-instructor-Store-Section' />
-                <NavigateComp text='Edit Section' type='success' to='code-member-instructor-Update-Section' />
-                <NavigateComp text='Edit Section' type='danger' goBack />
-            </View>
+                <View style={flexCustom.flexRowCenter as ViewStyle}>
+                    <NavigateComp
+                        text='Back'
+                        type='warning'
+                        to='Member'
+                        isNested
+                        nested={{ screen: 'Instructor', params: { screen: 'Courses' } }} />
+                    <NavigateComp
+                        text='Add Section'
+                        type='primary'
+                        to='Member'
+                        isNested
+                        nested={{
+                            screen: 'Instructor',
+                            params: {
+                                screen: 'StoreSection',
+                                params: {
+                                    data: {
+                                        sectionId: '',
+                                        title: '',
+                                        orderIn: '',
 
-            <View style={{ rowGap: root.sizeM }}>
-                <CardSectionLessonComp order={1} type='section' />
+                                        courseId: courseId,
+                                        courseTitle: courseTitle,
+                                        price: price,
+                                        iconSvg: iconSvg,
+                                        level: level,
+                                        status: status,
+                                    }
+                                }
+                            }
+                        }} />
+                </View>
+
+                <View style={{ rowGap: size.m }}>
+                    {sectionsLoading ? <LoadingComp type='primary' /> : (!sections || !sections.length) ? <BadgeComp text='No Sections' type='warning' /> :
+                        sections.map((value: any, index: any) => (
+                            <CardSectionLessonComp
+                                key={index}
+                                type='section'
+                                order={index + 1}
+                                orderIn={value.order_in_course}
+                                created_at={value.created_at}
+                                updated_at={value.updated_at}
+
+                                sectionId={value.id}
+                                sectionTitle={value.title}
+
+                                courseId={value.course_id}
+                                courseTitle={courseTitle}
+                                price={price}
+                                iconSvg={iconSvg}
+                                level={level}
+                                status={status}
+                            />
+                        ))}
+                </View>
             </View>
         </Layouts>
     )

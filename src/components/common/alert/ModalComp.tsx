@@ -1,7 +1,12 @@
-import { View, Modal, TouchableOpacity, ScrollView, Text } from 'react-native'
+import { useSelector } from 'react-redux';
 import React, { PropsWithChildren } from 'react'
-import { root, borderDefault, flexCustom, textCustom } from '@root/utils/Styles';
+import { View, Modal, TouchableOpacity, ScrollView, Text, ViewStyle } from 'react-native'
+
 import CloseIcon from '@svg/common/@root/close'
+
+import { size, borderDefault, flexCustom, textCustom, transColorMap, color } from '@root/utils/Styles';
+
+import { RootState } from '@root/redux/store';
 
 type ModalProps = PropsWithChildren<{
     title: string;
@@ -9,8 +14,8 @@ type ModalProps = PropsWithChildren<{
     onClose: () => void;
 }>
 
-
 const ModalComp = ({ title = 'Title', children, onClose }: ModalProps) => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
 
     const hancleClose = () => {
         onClose()
@@ -24,29 +29,30 @@ const ModalComp = ({ title = 'Title', children, onClose }: ModalProps) => {
         >
             <View style={{
                 flex: 1,
-                backgroundColor: root.transtextColor,
+                backgroundColor: transColorMap(theme).text,
                 justifyContent: 'center',
-                padding: root.sizeM,
+                padding: size.m,
 
             }}>
                 <View style={{
-                    ...borderDefault.borderS,
-                    backgroundColor: root.bgColor,
-                    padding: root.sizeM,
-                    rowGap: root.sizeM
+                    ...borderDefault(theme).borderS as ViewStyle,
+                    backgroundColor: colors.bg,
+                    padding: size.m,
+                    rowGap: size.m
                 }}>
-                    <View style={flexCustom.flexRowBetween}>
-                        <Text style={textCustom.textBold}>{title}</Text>
+                    <View style={(flexCustom.flexRowBetween as ViewStyle)}>
+                        <Text style={[textCustom(theme).textBold, { flex: 11 }]}>{title}</Text>
                         <TouchableOpacity onPress={hancleClose} style={{
-                            width: 31,
-                            height: 31,
+                            width: 27,
+                            height: 27,
                             alignItems: 'center',
                             justifyContent: 'center',
                             borderRadius: 99,
-                            borderColor: root.redColor,
-                            borderWidth: 2,
+                            borderColor: color.red,
+                            borderWidth: 1.5,
+                            flex: 1
                         }}>
-                            <CloseIcon width={13} height={13} fill={root.redColor} />
+                            <CloseIcon width={9} height={9} fill={color.red} />
                         </TouchableOpacity>
                     </View>
                     <ScrollView style={{
@@ -58,7 +64,7 @@ const ModalComp = ({ title = 'Title', children, onClose }: ModalProps) => {
                         alignSelf: 'center',
                         height: 'auto'
                     }}>
-                        <Text style={textCustom.textLight}>IOGM 2024</Text>
+                        <Text style={textCustom(theme).textLight}>IOGM 2024</Text>
                     </View>
                 </View>
             </View>

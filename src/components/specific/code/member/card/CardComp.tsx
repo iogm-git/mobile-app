@@ -1,26 +1,31 @@
-import { View, Text } from 'react-native'
-import React, { PropsWithChildren } from 'react'
-import { borderDefault, flexCustom, root, textCustom } from '@root/utils/Styles'
+import { View, Text, ViewStyle } from 'react-native'
+import { useSelector } from 'react-redux'
+import React, { PropsWithChildren, ReactNode } from 'react'
+
+import { borderDefault, flexCustom, size, textCustom } from '@root/utils/Styles'
+import { RootState } from '@root/redux/store'
 
 type CardProps = PropsWithChildren<{
-    children: React.ReactNode,
+    children: ReactNode,
     order?: number,
-    additional?: React.ReactNode
+    additional?: ReactNode
 }>
 
 const CardComp = ({ children, order, additional }: CardProps) => {
+    const { theme, colors } = useSelector((state: RootState) => state.theme)
+
     return (
-        <View style={[borderDefault.borderS, { rowGap: root.sizeS, padding: root.sizeS }]}>
+        <View style={[borderDefault(theme).borderS, { backgroundColor: colors.secondBg, rowGap: size.s, padding: size.s }]}>
             {order &&
-                <View style={flexCustom.flexRowBetween}>
-                    <View style={[borderDefault.borderS, {
+                <View style={flexCustom.flexRowBetween as ViewStyle}>
+                    <View style={[borderDefault(theme).borderS, {
                         width: 29,
                         height: 29,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: root.secondBgColor
+                        backgroundColor: colors.bg
                     }]}>
-                        <Text style={textCustom.textLight}>{order}</Text>
+                        <Text style={textCustom(theme).textLight}>{order}</Text>
                     </View>
                     {additional}
                 </View>

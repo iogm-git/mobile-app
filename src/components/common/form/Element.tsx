@@ -1,6 +1,10 @@
 import { View, Text } from 'react-native'
+import { useSelector } from 'react-redux'
 import React, { PropsWithChildren } from 'react'
-import { fontFamily, root } from '@root/utils/Styles'
+
+import { RootState } from '@root/redux/store'
+
+import { color, fontFamily, size } from '@root/utils/Styles'
 
 type ElementProps = PropsWithChildren<{
     name: string,
@@ -8,22 +12,24 @@ type ElementProps = PropsWithChildren<{
 }>
 
 const Element = ({ name, children }: ElementProps) => {
+    const { colors } = useSelector((state: RootState) => state.theme)
+
     return (
         <View style={{
             position: 'relative',
             borderWidth: 1.5,
             borderStyle: 'solid',
-            borderColor: root.blueColor,
-            borderRadius: root.radiusS
+            borderColor: color.blue,
+            borderRadius: size.radiusS
         }}>
             <Text style={{
                 position: 'absolute',
                 top: -12,
-                backgroundColor: root.bgColor,
+                backgroundColor: colors.bg,
                 left: 9,
                 paddingHorizontal: 5,
                 fontFamily: fontFamily.medium,
-                color: root.linkColor,
+                color: colors.link,
                 textTransform: 'capitalize',
             }}>{name}</Text>
             {children}
